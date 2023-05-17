@@ -1,36 +1,27 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, Button, Alert } from 'react-native';
-import { Constants } from 'expo';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Header from './src/components/Headers'
+import Footer from './src/components/Fooder'
+import Page1 from './src/screens/Page1'
+import Page2 from './src/screens/Page2'
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-export default class App extends Component {
-  handleButtonPress = () => {
-    Alert.alert(
-      'Button pressed!',
-      'You did it!',
-    );
-  };
 
-  render() {
-    return (
-      <View style={styles.container}>
 
-        <Button
-          title="Press me"
-          style={styles.button}
-          onPress={this.handleButtonPress}
-        />
 
-      </View>
-    );
-  }
+const Stack = createStackNavigator();
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{header:Header}}>
+          <Stack.Screen name="Page1" component={Page1} />
+          <Stack.Screen name="Page2" component={Page2} />
+        </Stack.Navigator>
+        <Footer />
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    //paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
-  }
-});
