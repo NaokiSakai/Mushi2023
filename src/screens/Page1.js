@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { StyleSheet,View, Text, Button } from 'react-native';
+import MapViewScreen from '../components/Map';
+
 
 export default function Page1({ navigation }) {
     return (
-      <View style={styles.container}>
-        <Text>このページはPage１です</Text>
-        <Button title="Page2へ" onPress={() => navigation.navigate('Page2')}></Button>
-      </View>
+      <MapViewScreen/>
     );
 }
 

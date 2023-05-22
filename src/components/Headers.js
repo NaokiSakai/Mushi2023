@@ -1,19 +1,55 @@
-import * as React from 'react';
-import { Appbar } from 'react-native-paper';
+import React from 'react';
+import { Appbar, Menu, PaperProvider} from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
-
-
-export default function Header() {
-  const _goBack = () => console.log('Went back');
-　const _handleSearch = () => console.log('Searching');
-  const _handleMore = () => console.log('Shown more');
+export default function CustomNavigationBar({
+  navigation,
+  back,
+}) {
+  //menu
+  const [visible, setVisible] = React.useState(false);
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
+  //検索
+  const _handleSearch = () => console.log('Searching');
+  const [text, setText] = React.useState("");
+  
 
   return (
-    <Appbar.Header>
-      <Appbar.BackAction onPress={_goBack} />
-      <Appbar.Content title="Title" subtitle="Subtitle" />
-      <Appbar.Action icon="magnify" onPress={_handleSearch} />
-      <Appbar.Action icon="dots-vertical" onPress={_handleMore} />
-    </Appbar.Header>
+    <PaperProvider>
+      <Appbar.Header>
+        <TextInput label='検索するスポットを入力' 
+        mode='outlined' value={text} onChangeText={text => setText(text)}
+        style={{width:"70%",marginLeft:"3%",marginBottom:"1.5%"}}/>
+        <Appbar.Action icon="magnify" onPress={_handleSearch} /> 
+        {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
+        {!back ? (
+          <Menu
+            visible={visible}
+            onDismiss={closeMenu}
+            anchor={
+              <Appbar.Action
+                icon="dots-vertical"
+                onPress={openMenu}
+              />
+            }>
+            <Menu.Item
+              onPress={() => navigation.navigate('Page2')}
+              title="ユーザー登録"
+            />
+            <Menu.Item
+              onPress={() => {
+                console.log('Option 2 was pressed');
+              }}
+              title="お問合せ"
+            />
+            <Menu.Item
+              onPress={closeMenu}
+              title="戻る"
+            />
+          </Menu>
+        ) : null}
+      </Appbar.Header>
+    </PaperProvider>
   );
 };

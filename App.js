@@ -14,14 +14,14 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <SafeAreaProvider>
       <NavigationContainer>
+        <SafeAreaProvider>
         <Stack.Navigator screenOptions={{header:Header}}>
           <Stack.Screen name="Page1" component={Page1} />
           <Stack.Screen name="Page2" component={Page2} />
         </Stack.Navigator>
-        <Footer />
+        {/* <Footer /> */}
+        </SafeAreaProvider>
       </NavigationContainer>
-    </SafeAreaProvider>
   );
 }
