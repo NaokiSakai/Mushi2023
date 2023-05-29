@@ -11,12 +11,11 @@ import {
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView,{Marker} from 'react-native-maps';
-import Footer from './Fooder';
 // import { AssertionError } from 'assert';
 
 const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : statusbar.currentHeight;
 
-export default class MapScreen extends Component{
+export default class MapPin extends Component{
   constructor(props){
     super(props)
     this.state ={
@@ -35,68 +34,9 @@ export default class MapScreen extends Component{
           //description: '田町ニューデイズ',
         },
       ],
-    };
-  }
-
-   onRegionChange(region) {
-    console.log("onReasionChange");
-    console.log(region);
-    this.setState({ region });
-  }
-  componentDidMount(){
-    this.getLocationAsync()
-  }
-  getLocationAsync = async() =>{
-    console.log('現在位置取得中')
-    const {status} = await Permissions.askAsync(Permissions.LOCATION)
-    if(status !== 'granted'){
-      this.setState({
-        message:'位置情報のパーミッションの取得に失敗しました。'
-      })
-      return
-    }
-    const location = await Location.getCurrentPositionAsync({});
-    let longitude = '経度:' + JSON.stringify(location.coords.longitude);
-    let latitude = '緯度:' + JSON.stringify(location.coords.latitude);
-    console.log(longitude);
-    console.log(latitude);
-    this.setState({
-      latitude:location.coords.latitude,
-      longitude:location.coords.longitude,
-    })
 
       
     }
-  };
-
-
-
-  render() {
-    return (
-      <View style={styles2.container}>
-
-        <MapView 
-        style={styles2.map}
-        onRegionChange={this.componentDidMount.bind(this)}
-        region={this.state.region}
-        >
-        <UrlTile
-            urlTemplate={this.state.urlTemplate}
-            maximumZ={19}
-            mapType={'none'}
-          />
-
-          {this.state.markers.map(marker => (
-            <Marker
-              key={marker.key}
-              coordinate={marker.latlng}
-              title={marker.title}
-              description={marker.description}
-            />
-          ))}
-        </MapView>
-      </View>
-    );
   }
   componentDidMount(){
     this.getLocationAsync()
@@ -122,24 +62,24 @@ export default class MapScreen extends Component{
 
   }
 
-//   handlePress = (event) => {
-//     const { latitude, longitude } = event.nativeEvent.coordinate;
-//     alert(`緯度: ${latitude}, 経度: ${longitude}`);
+  handlePress = (event) => {
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    alert(`緯度: ${latitude}, 経度: ${longitude}`);
 
-//     const newMarkers = [
-//       ...this.state.markers,
-//       {
-//         latlng:{
-//           latitude:latitude,
-//           longitude:longitude
-//         }
-//       }
-//     ];
+    const newMarkers = [
+      ...this.state.markers,
+      {
+        latlng:{
+          latitude:latitude,
+          longitude:longitude
+        }
+      }
+    ];
 
-//     this.setState({
-//       markers: newMarkers
-//     });
-//   };
+    this.setState({
+      markers: newMarkers
+    });
+  };
 
   
   
@@ -166,8 +106,16 @@ export default class MapScreen extends Component{
 
             onPress={this.handlePress}
           >
+             {this.state.markers.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={marker.latlng}
+              >
+                <Image source={require('../../assets/beetle_1742.png')} style={{height: 50, width:50 }} />
+              </Marker>
+             ))}
+
           </MapView>
-          <Footer/>
           <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
             <Text>現在地取得</Text> 
             <Image 
@@ -176,6 +124,7 @@ export default class MapScreen extends Component{
               style={{width:20,height:20,transform: [{ rotate: '340deg' }], }}
               />
           </TouchableOpacity>
+
         </View>
       );
     }

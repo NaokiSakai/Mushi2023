@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { BottomNavigation,Text } from 'react-native-paper';
+import {
+  StyleSheet,
+} from 'react-native';
 
 
 
@@ -23,9 +26,19 @@ export default function Footer() {
 
   return (
     <BottomNavigation
+      style={styles.container}
       navigationState={{ index, routes }}
       onIndexChange={setIndex}
       renderScene={renderScene}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  container:{
+    flex:0,
+    opacity:1,
+    padding:0,
+    
+  }
+})
