@@ -67,40 +67,9 @@ export default class MapScreen extends Component{
 
       
     }
-  };
+  
 
 
-
-  render() {
-    return (
-      <View style={styles2.container}>
-
-        <MapView 
-        style={styles2.map}
-        onRegionChange={this.componentDidMount.bind(this)}
-        region={this.state.region}
-        >
-        <UrlTile
-            urlTemplate={this.state.urlTemplate}
-            maximumZ={19}
-            mapType={'none'}
-          />
-
-          {this.state.markers.map(marker => (
-            <Marker
-              key={marker.key}
-              coordinate={marker.latlng}
-              title={marker.title}
-              description={marker.description}
-            />
-          ))}
-        </MapView>
-      </View>
-    );
-  }
-  componentDidMount(){
-    this.getLocationAsync()
-  }
   getLocationAsync = async() =>{
     console.log('現在位置取得中')
     const {status} = await Permissions.askAsync(Permissions.LOCATION)
