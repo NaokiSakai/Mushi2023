@@ -11,12 +11,11 @@ import {
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView,{Marker} from 'react-native-maps';
-import Footer from './Fooder';
 // import { AssertionError } from 'assert';
 
 const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : statusbar.currentHeight;
 
-export default class MapScreen extends Component{
+export default class MapPin extends Component{
   constructor(props){
     super(props)
     this.state ={
@@ -63,24 +62,24 @@ export default class MapScreen extends Component{
 
   }
 
-//   handlePress = (event) => {
-//     const { latitude, longitude } = event.nativeEvent.coordinate;
-//     alert(`緯度: ${latitude}, 経度: ${longitude}`);
+  handlePress = (event) => {
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    alert(`緯度: ${latitude}, 経度: ${longitude}`);
 
-//     const newMarkers = [
-//       ...this.state.markers,
-//       {
-//         latlng:{
-//           latitude:latitude,
-//           longitude:longitude
-//         }
-//       }
-//     ];
+    const newMarkers = [
+      ...this.state.markers,
+      {
+        latlng:{
+          latitude:latitude,
+          longitude:longitude
+        }
+      }
+    ];
 
-//     this.setState({
-//       markers: newMarkers
-//     });
-//   };
+    this.setState({
+      markers: newMarkers
+    });
+  };
 
   
   
@@ -107,8 +106,16 @@ export default class MapScreen extends Component{
 
             onPress={this.handlePress}
           >
+             {this.state.markers.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={marker.latlng}
+              >
+                <Image source={require('../../assets/beetle_1742.png')} style={{height: 50, width:50 }} />
+              </Marker>
+             ))}
+
           </MapView>
-          <Footer/>
           <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
             <Text>現在地取得</Text> 
             <Image 
@@ -117,6 +124,7 @@ export default class MapScreen extends Component{
               style={{width:20,height:20,transform: [{ rotate: '340deg' }], }}
               />
           </TouchableOpacity>
+
         </View>
       );
     }
