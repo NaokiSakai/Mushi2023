@@ -38,9 +38,7 @@ export default function CustomNavigationBar({
               title="ユーザー登録"
             />
             <Menu.Item
-              onPress={() => {
-                console.log('Option 2 was pressed');
-              }}
+              onPress={() => navigation.navigate('ContactForm')}
               title="お問合せ"
             />
             <Menu.Item

@@ -82,10 +82,10 @@ export default class MapViewScreen extends React.Component {
     return (
       <View style={styles2.container}>
 
-        <MapView
+        <MapView 
         style={styles2.map}
-        region={this.state.region}
         onRegionChange={this.componentDidMount.bind(this)}
+        region={this.state.region}
         >
         <UrlTile
             urlTemplate={this.state.urlTemplate}

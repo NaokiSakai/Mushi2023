@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { StyleSheet,View, Text, Button } from 'react-native';
-import { PaperProvider} from 'react-native-paper';
-import Footer from '../components/Fooder';
+import { PaperProvider, TextInput} from 'react-native-paper';
+import Input from '../components/Input';
 
-export default function Page1({ navigation }) {
+export default function ContactForm({ navigation }) {
     return (
       <PaperProvider>
       <View style={styles.container}>
-        <Text>このページはPage2です</Text>
-        <Button title="ContactFormへ" onPress={() => navigation.navigate('ContactForm')}></Button>
+        <Text>お問い合わせ</Text>
+        <Input></Input>
+        <Button title='TOP' onPress={() => navigation.navigate('Page1')}></Button>
       </View>
-      <Footer/>
       </PaperProvider>
     );
 }
@@ -22,3 +22,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
   },
 });
+
+
+
+

@@ -5,6 +5,7 @@ import Header from './src/components/Headers'
 import Footer from './src/components/Fooder'
 import Page1 from './src/screens/Page1'
 import Page2 from './src/screens/Page2'
+import ContactForm from './src/screens/ContactForm'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Navigator screenOptions={{header:Header}}>
           <Stack.Screen name="Page1" component={Page1} />
           <Stack.Screen name="Page2" component={Page2} />
+          <Stack.Screen name="ContactForm" component={ContactForm} />
         </Stack.Navigator>
         {/* <Footer /> */}
         </SafeAreaProvider>
