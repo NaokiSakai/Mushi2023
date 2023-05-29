@@ -1185,10 +1185,10 @@
     node-forge "^1.2.1"
     nullthrows "^1.1.1"
 
-"@expo/config-plugins@~6.0.0", "@expo/config-plugins@6.0.1":
-  version "6.0.1"
-  resolved "https://registry.npmjs.org/@expo/config-plugins/-/config-plugins-6.0.1.tgz"
-  integrity sha512-6mqZutxeibXFeqFfoZApFUEH2n1RxGXYMHCdJrDj4eXDBBFZ3aJ0XBoroZcHHHvfRieEsf54vNyJoWp7JZGj8g==
+"@expo/config-plugins@~6.0.0", "@expo/config-plugins@6.0.2":
+  version "6.0.2"
+  resolved "https://registry.npmjs.org/@expo/config-plugins/-/config-plugins-6.0.2.tgz"
+  integrity sha512-Cn01fXMHwjU042EgO9oO3Mna0o/UCrW91MQLMbJa4pXM41CYGjNgVy1EVXiuRRx/upegHhvltBw5D+JaUm8aZQ==
   dependencies:
     "@expo/config-types" "^48.0.0"
     "@expo/json-file" "~8.2.37"
@@ -3269,20 +3269,25 @@ expo-modules-core@1.2.7:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-permissions@^14.1.1:
+  version "14.1.1"
+  resolved "https://registry.npmjs.org/expo-permissions/-/expo-permissions-14.1.1.tgz"
+  integrity sha512-hOuAOBz+ZLsSJ3E8Ere/oA7YIYLNGf9fCApTi9OQmeJyCBsBHynf1yqMfVVpuDcCMixZ2XzsWlScq75f+7U1dQ==
+
 expo-status-bar@~1.4.4:
   version "1.4.4"
   resolved "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-1.4.4.tgz"
   integrity sha512-5DV0hIEWgatSC3UgQuAZBoQeaS9CqeWRZ3vzBR9R/+IUD87Adbi4FGhU10nymRqFXOizGsureButGZIXPs7zEA==
 
 expo@*, expo@~48.0.15:
-  version "48.0.16"
-  resolved "https://registry.npmjs.org/expo/-/expo-48.0.16.tgz"
-  integrity sha512-3LOfO80FZn+K3NngaP80LC2KE4rQcuzF3hQB6k8877A3Y/UPF5jmr8H7jlRrfvWSaYlenwzHhMs6Lyhr3zwfGw==
+  version "48.0.17"
+  resolved "https://registry.npmjs.org/expo/-/expo-48.0.17.tgz"
+  integrity sha512-5T1CsMUlfI+xFB89GOU+/xtSSbSBBFVTqwgheAU0cQolfbs+YyJCMTKU5vN45N5OK+ym7p/LKPa6DQAxYPF8YQ==
   dependencies:
     "@babel/runtime" "^7.20.0"
     "@expo/cli" "0.7.1"
     "@expo/config" "8.0.2"
-    "@expo/config-plugins" "6.0.1"
+    "@expo/config-plugins" "6.0.2"
     "@expo/vector-icons" "^13.0.0"
     babel-preset-expo "~9.3.2"
     cross-spawn "^6.0.5"

@@ -1,121 +1,151 @@
-import * as React from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import MapView, { UrlTile, Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
-import Footer from './Fooder';
+import React,{Component, useState}from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 
-export default class MapViewScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 初期表示位置を設定
-      region: {
-        latitude: 35.645736,
-        longitude: 139.747575,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      },
-      urlTemplate: 'http://c.tile.openstreetmap.org/{z}/{x}/{y}.jpg',
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+import MapView,{Marker} from 'react-native-maps';
+// import { AssertionError } from 'assert';
+
+const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : statusbar.currentHeight;
+
+export default class MapScreen extends Component{
+  constructor(props){
+    super(props)
+    this.state ={
+      latitude:null,
+      longitude:null,
+      message:'位置情報取得中',
+      //タップした位置の緯度経度
       markers: [
         {
-          key: 'tamachiStation',
+          //key: 'tamachiStation',
           latlng: {
-            latitude: 35.645736,
-            longitude: 139.747575,
+            latitude: undefined,
+            longitude: undefined,
           },
-          title: '田町駅',
-          description: '田町ニューデイズ',
+          //title: '田町駅',
+          //description: '田町ニューデイズ',
         },
       ],
-    };
-  }
 
-   onRegionChange(region) {
-    console.log("onReasionChange");
-    console.log(region);
-    this.setState({ region });
-  }
-
-  componentDidMount() {
-    console.log("画面起動")
-    // 現在位置を読み込む
-    this._getLocationAsync();
-  }
-
-  // 現在位置の取得
-  _getLocationAsync = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    console.log("Status");
-    console.log(status);
-    if (status !== 'granted') {
-      this.setState({
-      submitMessage: '位置情報の取得が許可されませんでした。',
-      });
-    }else if(status === 'granted'){
-      console.log("getCurrentPositionAsync");
-      await Location.getCurrentPositionAsync({}).then((location) => {
-        let longitude = '経度:' + JSON.stringify(location.coords.longitude);
-        let latitude = '緯度:' + JSON.stringify(location.coords.latitude);
-        console.log(longitude);
-        console.log(latitude);
-        // 現在位置をMap Viewの中心に更新
-        this.setState({
-          region: {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }
-        })
-
-      }).catch((e) => {
-        console.log("現在位置取得失敗");
-        console.log(e);
-      });
-
+      
     }
+  }
+  componentDidMount(){
+    this.getLocationAsync()
+  }
+  getLocationAsync = async() =>{
+    console.log('現在位置取得中')
+    const {status} = await Permissions.askAsync(Permissions.LOCATION)
+    if(status !== 'granted'){
+      this.setState({
+        message:'位置情報のパーミッションの取得に失敗しました。'
+      })
+      return
+    }
+    const location = await Location.getCurrentPositionAsync({});
+    let longitude = '経度:' + JSON.stringify(location.coords.longitude);
+    let latitude = '緯度:' + JSON.stringify(location.coords.latitude);
+    console.log(longitude);
+    console.log(latitude);
+    this.setState({
+      latitude:location.coords.latitude,
+      longitude:location.coords.longitude,
+    })
+
+  }
+
+  handlePress = (event) => {
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    alert(`緯度: ${latitude}, 経度: ${longitude}`);
+
+    const newMarkers = [
+      ...this.state.markers,
+      {
+        latlng:{
+          latitude:latitude,
+          longitude:longitude
+        }
+      }
+    ];
+
+    this.setState({
+      markers: newMarkers
+    });
   };
 
+  
+  
+  render(){
+    if(this.state.latitude && this.state.longitude){
+      return (
+        <View style={styles.container}>
+          <MapView
+            style={{flex:1}}
+            initialRegion={{
+              latitude:this.state.latitude,
+              longitude:this.state.longitude,
+              latitudeDelta:0.002,
+              longitudeDelta:0.002,
+            }}
+            region={{
+              latitude:this.state.latitude,
+              longitude:this.state.longitude,
+              latitudeDelta:0.002,
+              longitudeDelta:0.002,
 
+            }}
+            showsUserLocation={true}
 
-  render() {
+            onPress={this.handlePress}
+          >
+             {this.state.markers.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={marker.latlng}
+              />
+             ))}
+
+          </MapView>
+          <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
+            <Text>現在地取得</Text> 
+            <Image 
+              resizeMode='contain'
+              source={require(`../../assets/favicon.png`)} 
+              style={{width:20,height:20,transform: [{ rotate: '340deg' }], }}
+              />
+          </TouchableOpacity>
+
+        </View>
+      );
+    }
     return (
-      <View style={styles2.container}>
+      <View style={{flex:1,justifyContent:"center"}}>
+        <Text>{this.state.message}</Text>
 
-        <MapView
-        style={styles2.map}
-        region={this.state.region}
-        onRegionChange={this.componentDidMount.bind(this)}
-        >
-        <UrlTile
-            urlTemplate={this.state.urlTemplate}
-            maximumZ={19}
-            mapType={'none'}
-          />
-
-          {this.state.markers.map(marker => (
-            <Marker
-              key={marker.key}
-              coordinate={marker.latlng}
-              title={marker.title}
-              description={marker.description}
-            />
-          ))}
-        </MapView>
       </View>
-    );
-  }
-}
+      )
 
-const styles2 = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  }
+};
+
+const styles = StyleSheet.create({
+  container:{
+    paddingTop:STATUS_BAR_HEIGHT,
+    flex:1,
+    backgroundColor:'#fff',
+    justifyContent:'center',
   },
-  map: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  },
-});
+  now:{
+    position:'absolute',
+    right:10,
+    top:30,
+  }
+})

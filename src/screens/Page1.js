@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { StyleSheet,View, Text, Button } from 'react-native';
-import MapViewScreen from '../components/Map';
+import MapScreen from '../components/Map';
+
 
 
 export default function Page1({ navigation }) {
     return (
-      <MapViewScreen/>
+      <MapScreen/>
     );
 }
 
