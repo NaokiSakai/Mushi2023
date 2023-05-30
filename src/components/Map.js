@@ -11,7 +11,7 @@ import {
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView,{Marker} from 'react-native-maps';
-import Footer from './Fooder';
+import Footer from './Footer';
 // import { AssertionError } from 'assert';
 
 const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : statusbar.currentHeight;
@@ -109,14 +109,14 @@ export default class MapScreen extends Component{
           >
           </MapView>
           <Footer/>
-          <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
+          {/* <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
             <Text>現在地取得</Text> 
             <Image 
               resizeMode='contain'
               source={require(`../../assets/favicon.png`)} 
               style={{width:20,height:20,transform: [{ rotate: '340deg' }], }}
               />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       );
     }
