@@ -1,14 +1,20 @@
-import * as React from 'react';
+// Footer.js
+
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';  // 追加
+import { useNavigation } from '@react-navigation/native';
 
 const BOTTOM_APPBAR_HEIGHT = 65;
 
-export default function Footer() {  // navigation パラメータを削除
+export default function Footer() {
   const { bottom } = useSafeAreaInsets();
-  const navigation = useNavigation();  // 追加
+  const navigation = useNavigation();
+
+  const handleReload = () => {
+    navigation.replace('MapScreen'); // MapScreenにリロードするためにreplaceを使用
+  };
 
   return (
     <Appbar
@@ -21,8 +27,8 @@ export default function Footer() {  // navigation パラメータを削除
       ]}
       safeAreaInsets={{ bottom }}
     >
-      <Appbar.Action style={[styles.icon]} icon="autorenew" onPress={() => {}} />
-      <Appbar.Action style={[styles.icon]} icon="map-marker-radius" onPress={() => navigation.navigate('MainMapPage')} />
+      <Appbar.Action style={[styles.icon]} icon="autorenew" onPress={() => navigation.navigate('Page2')}/>
+      <Appbar.Action style={[styles.icon]} icon="map-marker-radius" onPress={handleReload} />
       <Appbar.Action style={[styles.icon]} icon="plus-circle-outline" onPress={() => navigation.navigate('PinMapPage')} />
       <Appbar.Action style={[styles.icon]} icon="email-outline" onPress={() => {}} />
     </Appbar>

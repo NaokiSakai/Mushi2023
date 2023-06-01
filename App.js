@@ -7,6 +7,7 @@ import MainMapPage from './src/screens/MainMapPage'
 import PinMapPage from './src/screens/PinMapPage'
 import Page2 from './src/screens/Page2'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import MapScreen from './src/components/Map';
 
 
 
@@ -21,6 +22,7 @@ export default function App() {
           <Stack.Screen name="MainMapPage" component={MainMapPage} />
           <Stack.Screen name="PinMapPage" component={PinMapPage} />
           <Stack.Screen name="Page2" component={Page2} />
+          <Stack.Screen name="MapScreen" component={MapScreen} />
         </Stack.Navigator>
         {/* <Footer /> */}
         </SafeAreaProvider>
