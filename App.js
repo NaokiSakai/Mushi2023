@@ -8,7 +8,7 @@ import Page1 from './src/screens/Page1'
 import Page2 from './src/screens/Page2'
 import ContactForm from './src/screens/ContactForm'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
+import {Send } from '.src/screens/Send'
 
 
 

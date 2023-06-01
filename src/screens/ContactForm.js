@@ -9,7 +9,6 @@ export default function ContactForm({ navigation }) {
       <View style={styles.container}>
         <Text>お問い合わせ</Text>
         <Input></Input>
-        <Button title='TOP' onPress={() => navigation.navigate('Page1')}></Button>
       </View>
       </PaperProvider>
     );
