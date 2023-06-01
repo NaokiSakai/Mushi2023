@@ -34,7 +34,7 @@ export default class MapPin extends Component{
           //description: '田町ニューデイズ',
         },
       ],
-
+      registrationPageData: null,
       
     }
   }
@@ -62,10 +62,9 @@ export default class MapPin extends Component{
 
   }
 
-  handlePress = (event) => {
+  handlePress = (event,navigation) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
     alert(`緯度: ${latitude}, 経度: ${longitude}`);
-
     const newMarkers = [
       ...this.state.markers,
       {
@@ -75,6 +74,7 @@ export default class MapPin extends Component{
         }
       }
     ];
+    
 
     this.setState({
       markers: newMarkers
@@ -87,8 +87,11 @@ export default class MapPin extends Component{
     if(this.state.latitude && this.state.longitude){
       return (
         <View style={styles.container}>
+          <View style={styles.warningTextContainer}>
+            <Text style={styles.warningText}>タップして情報を追加してください</Text>
+           </View>
           <MapView
-            style={{flex:1}}
+            style={{flex:0.99}}
             initialRegion={{
               latitude:this.state.latitude,
               longitude:this.state.longitude,
@@ -106,6 +109,7 @@ export default class MapPin extends Component{
 
             onPress={this.handlePress}
           >
+            
              {this.state.markers.map((marker, index) => (
               <Marker
                 key={index}
@@ -114,40 +118,62 @@ export default class MapPin extends Component{
                 <Image source={require('../../assets/beetle_1742.png')} style={{height: 50, width:50 }} />
               </Marker>
              ))}
-
           </MapView>
-          <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
+          {/* <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
             <Text>現在地取得</Text> 
             <Image 
               resizeMode='contain'
               source={require(`../../assets/favicon.png`)} 
               style={{width:20,height:20,transform: [{ rotate: '340deg' }], }}
               />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
         </View>
       );
     }
     return (
-      <View style={{flex:1,justifyContent:"center"}}>
-        <Text>{this.state.message}</Text>
-
-      </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
+      <Text>{this.state.message}</Text>
+    </View>
       )
 
   }
 };
 
 const styles = StyleSheet.create({
-  container:{
-    paddingTop:STATUS_BAR_HEIGHT,
-    flex:1,
-    backgroundColor:'#fff',
-    justifyContent:'center',
+  container: {
+    paddingTop: STATUS_BAR_HEIGHT,
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
   },
-  now:{
-    position:'absolute',
-    right:10,
-    top:30,
-  }
-})
+  warningTextContainer: {
+    position: 'relative',
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 10,
+    marginTop: 75,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+    // height: 50, ← コメントアウトする
+  },
+  warningText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  now: {
+    position: 'absolute',
+    right: 10,
+    top: 30,
+  },
+  // 他のスタイル
+});
+
+  
+

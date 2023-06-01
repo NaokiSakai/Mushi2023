@@ -35,11 +35,13 @@ export default function CustomNavigationBar({
             }>
             <Menu.Item
               onPress={() => navigation.navigate('Page2')}
-              title="ユーザー登録"
+              title="利用規約"
             />
             <Menu.Item
-              onPress={() => navigation.navigate('ContactForm')}
-              title="お問合せ"
+              onPress={() => {
+                console.log('Option 2 was pressed');
+              }}
+              title="アプリ使用方法"
             />
             <Menu.Item
               onPress={closeMenu}
