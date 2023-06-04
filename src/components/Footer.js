@@ -30,7 +30,7 @@ export default function Footer() {
       <Appbar.Action style={[styles.icon]} icon="autorenew" onPress={() => navigation.navigate('Page2')}/>
       <Appbar.Action style={[styles.icon]} icon="map-marker-radius" onPress={handleReload} />
       <Appbar.Action style={[styles.icon]} icon="plus-circle-outline" onPress={() => navigation.navigate('PinMapPage')} />
-      <Appbar.Action style={[styles.icon]} icon="email-outline" onPress={() => {}} />
+      <Appbar.Action style={[styles.icon]} icon="email-outline" onPress={() => navigation.navigate('ContactForm')} />
     </Appbar>
   );
 }
