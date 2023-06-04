@@ -2,7 +2,7 @@ import React from 'react';
 import { Appbar, Menu, PaperProvider} from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 
-export default function CustomNavigationBar({
+export default function Header({
   navigation,
   back,
 }) {
@@ -22,8 +22,6 @@ export default function CustomNavigationBar({
         mode='outlined' value={text} onChangeText={text => setText(text)}
         style={{width:"70%",marginLeft:"3%",marginBottom:"1.5%"}}/>
         <Appbar.Action icon="magnify" onPress={_handleSearch} /> 
-        {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
-        {!back ? (
           <Menu
             visible={visible}
             onDismiss={closeMenu}
@@ -48,7 +46,6 @@ export default function CustomNavigationBar({
               title="戻る"
             />
           </Menu>
-        ) : null}
       </Appbar.Header>
     </PaperProvider>
   );

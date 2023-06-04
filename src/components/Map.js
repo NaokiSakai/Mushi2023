@@ -12,15 +12,19 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView, { Marker } from 'react-native-maps';
 import Footer from './Footer';
+import { useRoute } from '@react-navigation/native';
 
 const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : StatusBar.currentHeight;
 
 // Map.js
 
 export default function MapScreen() {
+  const route = useRoute();
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [message, setMessage] = useState('位置情報取得中');
+  const markers = route.params || [];
+  console.log(markers);
 
   const getLocationAsync = async () => {
     console.log('現在位置取得中');
@@ -65,6 +69,14 @@ export default function MapScreen() {
           }}
           showsUserLocation={true}
         >
+           {markers.map((marker, index) => (
+            <Marker
+              key={index}
+              coordinate={marker.latlng}
+            >
+              <Image source={require('../../assets/beetle_1742.png')} style={{ height: 50, width: 50 }} />
+            </Marker>
+          ))}
         </MapView>
         <Footer handleReload={handleReload} />
       </View>

@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Header from './src/components/Headers'
+import HeaderBack from './src/components/HeaderBack';
 import Footer from './src/components/Footer'
 import MainMapPage from './src/screens/MainMapPage'
 import PinMapPage from './src/screens/PinMapPage'
@@ -26,7 +27,7 @@ export default function App() {
           <Stack.Screen
             name="PinMapPage"
             component={PinMapPage}
-            options={{ header: () => <Header title="Pin Map Page" /> }}
+            options={{ header: () => <HeaderBack title="Pin Map Page" /> }}
           />
           <Stack.Screen
             name="Page2"

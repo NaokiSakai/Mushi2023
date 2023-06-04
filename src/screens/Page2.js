@@ -6,12 +6,14 @@ import * as ImagePicker from 'expo-image-picker';
 import { Modal, Portal,  PaperProvider } from 'react-native-paper';
 
 
-export default function Page2({ navigation }) {
+export default function Page2({ navigation,route}) {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [time, setTime] = useState('');
   const [photo, setPhoto] = useState(null);
   const [cameraPermission, setCameraPermission] = useState(null);
+  const markers = route.params.markers;
+  console.log(markers);
   //const cameraRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -113,9 +115,10 @@ export default function Page2({ navigation }) {
           style={styles.cameraButton}
           disabled={!cameraPermission}
         />
-      <Button mode="contained" onPress={handleRegistration} style={styles.button}>
+      <Button mode="contained" onPress={() => navigation.navigate('MapScreen', markers)} style={styles.button}>
         登録
       </Button>
+
       </View>
     </View>
     </PaperProvider>
