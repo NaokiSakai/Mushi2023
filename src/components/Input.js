@@ -1,103 +1,77 @@
 import React, { useState } from 'react';
-import { TextInput, Button, View, Text } from 'react-native';
-    
+import { View, StyleSheet } from 'react-native';
+import { TextInput, Button, Snackbar } from 'react-native-paper';
 
-const Input = () => {
+export default function Input() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
-  const handleSubmit = () => {
-    // Handle form submission here
-    console.log('Name:', name);
-    console.log('Email:', email);
-   
-    const Input = () => {
-      const [name, setName] = useState('');
-      const [email, setEmail] = useState('');
-      const [phone, setPhone] = useState('');
-      const [address, setAddress] = useState('');
-    
-      const handleSubmit = () => {
-        // Handle form submission here
-        console.log('Name:', name);
-        console.log('Email:', email);
-        console.log('Phone:', phone);
-        console.log('Address:', address);
-      };
-    
-      return (
-        <>
-          <View style={{ marginBottom: 10 }}>
-            <Text>名前</Text>
-            <TextInput
-              value={name}
-              onChangeText={text => setName(text)}
-              style={{ flex: 1, borderWidth: 1, borderColor: 'gray', padding: 10 }}
-            />
-          </View>
-    
-          <View style={{ marginBottom: 10 }}>
-            <Text>Eメール</Text>
-            <TextInput
-              value={email}
-              onChangeText={text => setEmail(text)}
-              style={{ flex: 1, borderWidth: 1, borderColor: 'gray', padding: 10 }}
-            />
-          </View>
-    
-          <View style={{ marginBottom: 10 }}>
-            <Text>携帯番号</Text>
-            <TextInput
-              value={phone}
-              onChangeText={text => setPhone(text)}
-              style={{ flex: 1, borderWidth: 1, borderColor: 'gray', padding: 10 }}
-            />
-          </View>
-    
-          <Button title="送信" onPress={handleSubmit} />
-        </>
-      );
+  const handleSendEmail = () => {
+    // Send email logic here
+    const emailContent = {
+      name,
+      email,
+      message,
     };
-    
-    
-    console.log('Phone:', phone);
-    console.log('Address:', address);
+    // Replace the following console.log with your email sending code
+    console.log('Sending email:', emailContent);
+
+    // Show snackbar to indicate successful email submission
+    setSnackbarVisible(true);
+  };
+
+  const handleSnackbarDismiss = () => {
+    setSnackbarVisible(false);
   };
 
   return (
-    <>
-      <View style={{ marginBottom: 10 }}>
-        <Text>名前</Text>
-        <TextInput
-          value={name}
-          onChangeText={text => setName(text)}
-          style={{ width: '100%', borderWidth: 1, borderColor: 'gray', padding: 10 }}
-        />
-      </View>
-
-      <View style={{ marginBottom: 10 }}>
-        <Text>Eメール</Text>
-        <TextInput
-          value={email}
-          onChangeText={text => setEmail(text)}
-          style={{ width: '100%', borderWidth: 1, borderColor: 'gray', padding: 10 }}
-        />
-      </View>
-
-      <View style={{ marginBottom: 10 }}>
-        <Text>携帯番号</Text>
-        <TextInput
-          value={phone}
-          onChangeText={text => setPhone(text)}
-          style={{ width: '100%', borderWidth: 1, borderColor: 'gray', padding: 10 }}
-        />
-      </View>
-
-      <Button title="送信" onPress={handleSubmit} />
-    </>
+    <View style={styles.container}>
+      <TextInput
+        label="名前"
+        value={name}
+        onChangeText={text => setName(text)}
+        style={styles.input}
+      />
+      <TextInput
+        label="Eメール"
+        value={email}
+        onChangeText={text => setEmail(text)}
+        style={styles.input}
+        keyboardType="email-address"
+      />
+      <TextInput
+        label="メッセージ"
+        value={message}
+        onChangeText={text => setMessage(text)}
+        style={styles.input}
+        multiline
+        numberOfLines={5}
+      />
+      <Button mode="contained" onPress={handleSendEmail} style={styles.button}>
+        送信
+      </Button>
+      <Snackbar
+        visible={isSnackbarVisible}
+        onDismiss={handleSnackbarDismiss}
+        duration={3000}
+      >
+        お問い合わせメールが送信されました
+      </Snackbar>
+    </View>
   );
-};
+}
 
-export default Input;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  input: {
+    marginBottom: 10,
+  },
+  button: {
+    marginTop: 10,
+  },
+});
