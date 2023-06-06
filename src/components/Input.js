@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, Snackbar } from 'react-native-paper';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
+    authDomain: "mushimapworld.firebaseapp.com",
+    databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
+    projectId: "mushimapworld",
+    storageBucket: "mushimapworld.appspot.com",
+    messagingSenderId: "717364972455",
+    appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
+    measurementId: "G-NGJBM2G1RB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export default function Input() {
   const [name, setName] = useState('');
@@ -8,18 +25,25 @@ export default function Input() {
   const [message, setMessage] = useState('');
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
-  const handleSendEmail = () => {
-    // Send email logic here
-    const emailContent = {
-      name,
-      email,
-      message,
-    };
-    // Replace the following console.log with your email sending code
-    console.log('Sending email:', emailContent);
+  const handlepress = async () => {
+    try {
+      const emailContent = {
+        name,
+        email,
+        message,
+      };
 
-    // Show snackbar to indicate successful email submission
-    setSnackbarVisible(true);
+      const docRef = await addDoc(collection(db, 'Email'), emailContent);
+      console.log('Document written with ID: ', docRef.id);
+
+      // Send email logic here
+      console.log('Sending email:', emailContent);
+
+      // Show snackbar to indicate successful email submission
+      setSnackbarVisible(true);
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
   };
 
   const handleSnackbarDismiss = () => {
@@ -49,7 +73,7 @@ export default function Input() {
         multiline
         numberOfLines={5}
       />
-      <Button mode="contained" onPress={handleSendEmail} style={styles.button}>
+      <Button mode="contained" onPress={handlepress} style={styles.button}>
         送信
       </Button>
       <Snackbar

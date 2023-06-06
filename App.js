@@ -11,6 +11,23 @@ import Page2 from './src/screens/Page2'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import MapScreen from './src/components/Map';
 import ContactForm from './src/screens/ContactForm';
+import { initializeApp } from 'firebase/app'; // Firebase v9から追加されたモジュール
+import { getDatabase } from 'firebase/database'; // 必要に応じて他のFirebaseサービスを追加でインポート
+require('firebase/firestore');
+
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk',
+  authDomain: 'mushimapworld.firebaseapp.com',
+  databaseURL: 'https://mushimapworld-default-rtdb.firebaseio.com',
+  projectId: 'mushimapworld',
+  storageBucket: 'mushimapworld.appspot.com',
+  messagingSenderId: '717364972455',
+  appId: '1:717364972455:web:f8e0c51b6758c2432ec482',
+  measurementId: 'G-NGJBM2G1RB'
+};
+
+  const firebaseApp = initializeApp(firebaseConfig); // Firebaseアプリの初期化
 
 const Stack = createStackNavigator();
 
