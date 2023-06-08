@@ -6,7 +6,7 @@ import HeaderBack from './src/components/HeaderBack';
 import Footer from './src/components/Footer'
 import MainMapPage from './src/screens/MainMapPage'
 import PinMapPage from './src/screens/PinMapPage'
-import Page2 from './src/screens/Page2'
+import DateRegister from './src/screens/DateRegister'
 // import ContactForm from './src/screens/ContactForm'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import MapScreen from './src/components/Map';
@@ -47,8 +47,8 @@ export default function App() {
             options={{ header: () => <HeaderBack title="Pin Map Page" /> }}
           />
           <Stack.Screen
-            name="Page2"
-            component={Page2}
+            name="DateRegister"
+            component={DateRegister}
             options={{ headerTitle: '昆虫登録ページ' }}
           />
           <Stack.Screen

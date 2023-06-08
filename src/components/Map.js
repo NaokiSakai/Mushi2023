@@ -13,18 +13,33 @@ import * as Permissions from 'expo-permissions';
 import MapView, { Marker } from 'react-native-maps';
 import Footer from './Footer';
 import { useRoute } from '@react-navigation/native';
+import { CustomMarker } from './CustomMarker';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
-const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : StatusBar.currentHeight;
+const firebaseConfig = {
+  apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
+  authDomain: "mushimapworld.firebaseapp.com",
+  databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
+  projectId: "mushimapworld",
+  storageBucket: "mushimapworld.appspot.com",
+  messagingSenderId: "717364972455",
+  appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
+  measurementId: "G-NGJBM2G1RB"
+};
 
-// Map.js
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
 export default function MapScreen() {
-  const route = useRoute();
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [message, setMessage] = useState('位置情報取得中');
-  const markers = route.params || [];
-  console.log(markers);
+  const [markers, setMarkers] = useState([]);
 
   const getLocationAsync = async () => {
     console.log('現在位置取得中');
@@ -42,8 +57,25 @@ export default function MapScreen() {
     setLongitude(location.coords.longitude);
   };
 
+  const fetchMarkers = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'Register'));
+      const markersData = [];
+      querySnapshot.forEach((doc) => {
+      const data = doc.data().markers;
+      markersData.push(data); // マーカーデータを追加する
+      console.log(data);
+      });
+      setMarkers(markersData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
   useEffect(() => {
     getLocationAsync();
+    fetchMarkers();
   }, []);
 
   const handleReload = () => {
@@ -69,32 +101,41 @@ export default function MapScreen() {
           }}
           showsUserLocation={true}
         >
-           {markers.map((marker, index) => (
+          {markers.map((marker, index) => (
             <Marker
               key={index}
               coordinate={marker.latlng}
+              callout={<CustomMarker marker={marker} />}
             >
-              <Image source={require('../../assets/beetle_1742.png')} style={{ height: 50, width: 50 }} />
+              <Image
+                source={require('../../assets/beetle_1742.png')}
+                style={{ height: 50, width: 50 }}
+              />
             </Marker>
           ))}
+
         </MapView>
         <Footer handleReload={handleReload} />
       </View>
     );
   }
-  
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
       <Text>{message}</Text>
     </View>
-  );
-}  
-const styles = StyleSheet.create({
-    container: {
-      paddingTop: STATUS_BAR_HEIGHT,
-      flex: 1,
-      backgroundColor: '#fff',
-      justifyContent: 'center',
-    },
+   );
+  }
+      
+      
+  const styles = StyleSheet.create({
+  container: {
+  paddingTop: STATUS_BAR_HEIGHT,
+  flex: 1,
+  backgroundColor: '#fff',
+  justifyContent: 'center',
+  },
   });
+  
+      
