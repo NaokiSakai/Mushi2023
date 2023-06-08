@@ -58,8 +58,7 @@ export default function Input() {
         onChangeText={text => setName(text)}
         style={styles.input}
       />
-      <TextInput
-        label="Eメール"
+      <TextInput        label="Eメール"
         value={email}
         onChangeText={text => setEmail(text)}
         style={styles.input}

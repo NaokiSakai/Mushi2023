@@ -54,19 +54,19 @@ const MapPin = () => {
   const handlePress = (event) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
     alert(`緯度: ${latitude}, 経度: ${longitude}`);
-    const newMarkers = [
-      ...markers,
+    const newMarkers = 
+      // ...markers,
       {
         latlng: {
           latitude: latitude,
           longitude: longitude,
         },
-      },
-    ];
+      };
+    
 
     setMarkers(newMarkers);
 
-    navigation.navigate('Page2', { markers: newMarkers });
+    navigation.navigate('DateRegister', { markers: newMarkers });
 
   };
 

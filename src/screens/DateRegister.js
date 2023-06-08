@@ -4,9 +4,28 @@ import { TextInput, Button, IconButton, Card } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 // import { Camera } from 'expo-camera';
 import { Modal, Portal,  PaperProvider } from 'react-native-paper';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
+  authDomain: "mushimapworld.firebaseapp.com",
+  databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
+  projectId: "mushimapworld",
+  storageBucket: "mushimapworld.appspot.com",
+  messagingSenderId: "717364972455",
+  appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
+  measurementId: "G-NGJBM2G1RB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 
-export default function Page2({ navigation,route}) {
+
+export default function DateRegister({ route}) {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [time, setTime] = useState('');
@@ -14,6 +33,7 @@ export default function Page2({ navigation,route}) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const markers = route.params.markers;
   console.log(markers);
+  const navigation = useNavigation();
   //const cameraRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -61,9 +81,28 @@ export default function Page2({ navigation,route}) {
     }
   };
 
-  const handleRegistration = () => {
+  const handleRegistration = async() => {
     // 登録処理を実行する
-    console.log('Registration:', name, address, time, photo);
+    try {
+      const RegisterContent = {
+        name,
+        address,
+        time,
+        photo,
+        markers,
+      };
+
+      const docRef = await addDoc(collection(db, 'Register'), RegisterContent)
+      navigation.navigate('MapScreen');
+      console.log('Document written with ID: ', docRef.id);
+
+      // Send email logic here
+      console.log('Sending email:', RegisterContent);
+
+      
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
   };
 
   return (
@@ -115,9 +154,13 @@ export default function Page2({ navigation,route}) {
           style={styles.cameraButton}
           disabled={!cameraPermission}
         />
-      <Button mode="contained" onPress={() => navigation.navigate('MapScreen', markers)} style={styles.button}>
+      {/* <Button mode="contained" onPress={() => navigation.navigate('MapScreen', markers)} style={styles.button}>
+        登録
+      </Button> */}
+      <Button mode="contained" onPress={() => handleRegistration()} style={styles.button}>
         登録
       </Button>
+
 
       </View>
     </View>
