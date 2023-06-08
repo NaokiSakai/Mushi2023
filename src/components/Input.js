@@ -84,7 +84,9 @@ export default function Input() {
       </Snackbar>
     </View>
   );
+  
 }
+
 
 const styles = StyleSheet.create({
   container: {

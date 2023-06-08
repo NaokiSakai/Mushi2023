@@ -17,6 +17,8 @@ import { CustomMarker } from './CustomMarker';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { collection, getDocs } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
@@ -32,6 +34,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+const navigation = useNavigation();
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
@@ -82,6 +86,10 @@ export default function MapScreen() {
     getLocationAsync();
   };
 
+  const handleFetchMarkers = async () => {
+    await fetchMarkers();
+  };
+
   if (latitude && longitude) {
     return (
       <View style={styles.container}>
@@ -106,6 +114,7 @@ export default function MapScreen() {
               key={index}
               coordinate={marker.latlng}
               callout={<CustomMarker marker={marker} />}
+              onPress={()=>navigation.navigate('DetailData')}
             >
               <Image
                 source={require('../../assets/beetle_1742.png')}
@@ -115,17 +124,17 @@ export default function MapScreen() {
           ))}
 
         </MapView>
-        <Footer handleReload={handleReload} />
+        <Footer onGetLocation={handleReload} onFetchMarkers={handleFetchMarkers} />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
-      <Text>{message}</Text>
-    </View>
-   );
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
+        <Text>現在地取得中</Text>
+      </View>
+    );
   }
       
       
