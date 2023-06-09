@@ -17,7 +17,7 @@ import { CustomMarker } from './CustomMarker';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { collection, getDocs } from 'firebase/firestore';
-import { useNavigation } from '@react-navigation/native';
+
 
 
 const firebaseConfig = {
@@ -35,11 +35,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const navigation = useNavigation();
-
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
-export default function MapScreen() {
+export default function MapScreen(navigation) {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [message, setMessage] = useState('位置情報取得中');
@@ -114,7 +112,7 @@ export default function MapScreen() {
               key={index}
               coordinate={marker.latlng}
               callout={<CustomMarker marker={marker} />}
-              onPress={()=>navigation.navigate('DetailData')}
+              onPress={()=>alert('hello')}
             >
               <Image
                 source={require('../../assets/beetle_1742.png')}

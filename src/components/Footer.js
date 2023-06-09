@@ -32,7 +32,7 @@ export default function Footer({ onGetLocation, onFetchMarkers }) {
       ]}
       safeAreaInsets={{ bottom }}
     >
-      <Appbar.Action style={[styles.icon]} icon="autorenew" onPress={handleFetchMarkers }/>
+      <Appbar.Action style={[styles.icon]} icon="autorenew" onPress={handleFetchMarkers}/>
       <Appbar.Action style={[styles.icon]} icon="map-marker-radius" onPress={handleGetLocation} />
       <Appbar.Action style={[styles.icon]} icon="plus-circle-outline" onPress={() => navigation.navigate('PinMapPage')} />
       <Appbar.Action style={[styles.icon]} icon="email-outline" onPress={() => navigation.navigate('ContactForm')} />
