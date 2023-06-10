@@ -12,36 +12,34 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView, { Marker } from 'react-native-maps';
 import Footer from './Footer';
-import { useRoute } from '@react-navigation/native';
-import { CustomMarker } from './CustomMarker';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { collection, getDocs } from 'firebase/firestore';
-
-
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { CustomMarker } from './CustomMarker';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
-  authDomain: "mushimapworld.firebaseapp.com",
-  databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
-  projectId: "mushimapworld",
-  storageBucket: "mushimapworld.appspot.com",
-  messagingSenderId: "717364972455",
-  appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
-  measurementId: "G-NGJBM2G1RB"
+  // Firebaseの設定情報
+    apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
+    authDomain: "mushimapworld.firebaseapp.com",
+    databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
+    projectId: "mushimapworld",
+    storageBucket: "mushimapworld.appspot.com",
+    messagingSenderId: "717364972455",
+    appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
+    measurementId: "G-NGJBM2G1RB"
 };
-
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
-export default function MapScreen(navigation) {
+export default function MapScreen() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [message, setMessage] = useState('位置情報取得中');
   const [markers, setMarkers] = useState([]);
+  const navigation = useNavigation();
 
   const getLocationAsync = async () => {
     console.log('現在位置取得中');
@@ -64,16 +62,21 @@ export default function MapScreen(navigation) {
       const querySnapshot = await getDocs(collection(db, 'Register'));
       const markersData = [];
       querySnapshot.forEach((doc) => {
-      const data = doc.data().markers;
-      markersData.push(data); // マーカーデータを追加する
-      console.log(data);
+        const data = doc.data();
+        const markerData = {
+          latlng: data.markers,
+          time: data.time,
+          address: data.address,
+          name: data.name,
+          photo: data.photo,
+        };
+        markersData.push(markerData);
       });
       setMarkers(markersData);
     } catch (error) {
       console.error(error);
     }
   };
-  
 
   useEffect(() => {
     getLocationAsync();
@@ -110,9 +113,9 @@ export default function MapScreen(navigation) {
           {markers.map((marker, index) => (
             <Marker
               key={index}
-              coordinate={marker.latlng}
+              coordinate={marker.latlng.latlng}
               callout={<CustomMarker marker={marker} />}
-              onPress={()=>alert('hello')}
+              onPress={() => navigation.navigate('DetailData', { marker: marker })}
             >
               <Image
                 source={require('../../assets/beetle_1742.png')}
@@ -120,29 +123,29 @@ export default function MapScreen(navigation) {
               />
             </Marker>
           ))}
-
         </MapView>
         <Footer onGetLocation={handleReload} onFetchMarkers={handleFetchMarkers} />
       </View>
     );
   }
 
+
   return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
-        <Text>現在地取得中</Text>
-      </View>
-    );
-  }
-      
-      
-  const styles = StyleSheet.create({
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
+      <Text>現在地取得中</Text>
+    </View>
+  );
+}
+
+
+const styles = StyleSheet.create({
   container: {
-  paddingTop: STATUS_BAR_HEIGHT,
-  flex: 1,
-  backgroundColor: '#fff',
-  justifyContent: 'center',
+    paddingTop: STATUS_BAR_HEIGHT,
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
   },
-  });
-  
-      
+});
+
+

@@ -3,19 +3,21 @@ import { StyleSheet, View } from 'react-native';
 import { Avatar, Card, Paragraph } from 'react-native-paper';
 
 export default function DetailData({ route }) {
-  const { image, insect, address, time } = route.params;
+  const marker = route.params.marker;
 
   return (
     <View style={styles.container}>
       <Card>
-        <Card.Cover source={{ uri: image }} />
+        <View style={styles.imageContainer}>
+          <Card.Cover source={{ uri: marker.photo }} style={styles.image} />
+        </View>
         <Card.Content>
           <View style={styles.row}>
             <Avatar.Icon size={48} icon="bug" />
-            <Paragraph style={styles.insect}>{insect}</Paragraph>
+            <Paragraph style={styles.insect}>{marker.name}</Paragraph>
           </View>
-          <Paragraph style={styles.address}>{address}</Paragraph>
-          <Paragraph style={styles.time}>{time}</Paragraph>
+          <Paragraph style={styles.address}>住所：{marker.address}</Paragraph>
+          <Paragraph style={styles.time}>発見時刻：{marker.time}</Paragraph>
         </Card.Content>
       </Card>
     </View>
@@ -27,15 +29,26 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  imageContainer: {
+    alignItems: 'center',
+  },
+  image: {
+    width: 300, // 画像の幅を指定
+    height: 300, // 画像の高さを指定
+    resizeMode: 'cover', // 画像のリサイズモード
+    margin:10
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    marginTop: 10,
   },
   insect: {
     marginLeft: 8,
-    fontSize: 24,
+    fontSize: 21,
     fontWeight: 'bold',
+    padding: 6,
   },
   address: {
     marginVertical: 16,
