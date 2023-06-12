@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-import { TextInput, Button, IconButton, Card } from 'react-native-paper';
+import { TextInput, Button, IconButton, Card ,Text} from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { Modal, Portal,  PaperProvider } from 'react-native-paper';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Appbar } from 'react-native-paper';
+
+
 
 //firebaseに必要な値
 const firebaseConfig = {
@@ -28,9 +32,11 @@ const db = getFirestore(app);
 export default function DateRegister({ route}) {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
-  const [time, setTime] = useState('');
+  const [memo, setMemo] = useState('');
+  const [time, setTime] = useState(new Date());
   const [photo, setPhoto] = useState(null);
   const [cameraPermission, setCameraPermission] = useState(null);
+  const [photoSelected, setPhotoSelected] = useState(false);
   const markers = route.params.markers;
   console.log(markers);
   const navigation = useNavigation();
@@ -52,6 +58,8 @@ export default function DateRegister({ route}) {
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
+        width:'90%',
+        marginLeft:'5%'
       };
 
   //写真を撮る
@@ -65,6 +73,8 @@ export default function DateRegister({ route}) {
 
     if (!result.cancelled) {
       setPhoto(result.uri);
+      setPhotoSelected(true);
+      setVisible(false)
     }
   };
   //写真を選択する
@@ -78,8 +88,16 @@ export default function DateRegister({ route}) {
 
     if (!result.cancelled) {
       setPhoto(result.uri);
+      setPhotoSelected(true);
+      setVisible(false)
     }
   };
+
+  const handleCancelPhoto = () => {
+    setPhoto(null);
+    setPhotoSelected(false);
+  };
+
   //firebaseへの登録処理
   const handleRegistration = async() => {
     // 登録処理を実行する
@@ -87,6 +105,7 @@ export default function DateRegister({ route}) {
       const RegisterContent = {
         name,
         address,
+        memo,
         time,
         photo,
         markers,
@@ -126,44 +145,60 @@ export default function DateRegister({ route}) {
         style={styles.input}
       />
       <TextInput
-        label="住所"
+        label="スポット名"
         value={address}
         onChangeText={(text) => setAddress(text)}
         style={styles.input}
       />
-      <TextInput
-        label="採取時間"
-        value={time}
-        onChangeText={(text) => setTime(text)}
+       <TextInput
+        label="メモ"
+        value={memo}
+        onChangeText={(text) => setMemo(text)}
         style={styles.input}
+        multiline
+        numberOfLines={4}
+        blurOnSubmit
       />
-      <Card>
-       {photo && <Image source={{ uri: photo }} style={styles.photo} />}
-       </Card>
-       {/* <TextInput
-          label="写真"
-          value={photo}
-          onChangeText={(text) => setPhoto(text)}
-          style={styles.input}
-        /> */}
-      <View style={styles.cameraContainer}>
-        <IconButton
-          icon="camera"
-          size={30}
-          onPress={showModal}
-          style={styles.cameraButton}
-          disabled={!cameraPermission}
-        />
-      {/* <Button mode="contained" onPress={() => navigation.navigate('MapScreen', markers)} style={styles.button}>
-        登録
-      </Button> */}
-      <Button mode="contained" onPress={() => handleRegistration()} style={styles.button}>
-        登録
-      </Button>
-
-
-      </View>
+      <Text style={styles.label}>採取時間</Text>
+      <DateTimePicker
+        label="採取時間"
+        value={time} // ここを修正
+        mode="datetime"
+        is24Hour={true}
+        display="default"
+        onChange={(event, selectedDate) => {
+          const currentDate = selectedDate || time;
+          setTime(currentDate);
+        }}
+        style={styles.Date}
+      />
+      <Card style={styles.Card}>
+        {photo && (
+          <Image source={{ uri: photo }} style={styles.photo} />
+        )}
+        {!photo && !photoSelected && (
+          <View style={styles.cameraContainer}>
+            <IconButton
+              icon="camera"
+              size={30}
+              onPress={showModal}
+              style={styles.cameraButton}
+              disabled={!cameraPermission}
+            />
+          </View>
+        )}
+        {photoSelected && (
+          <Button mode="outlined" onPress={handleCancelPhoto} style={styles.button}>
+            選択を解除
+          </Button>
+        )}
+      </Card>
     </View>
+      <Appbar style={styles.Footer}>
+        <Button mode="contained" onPress={() => handleRegistration()} style={styles.button2}>
+          登録
+        </Button>
+      </Appbar>
     </PaperProvider>
   );
 };
@@ -172,22 +207,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   cameraContainer: {
     alignItems: 'center',
-    marginBottom: 16,
-    marginTop:15
+    marginBottom: 30,
+    marginTop:30
   },
   camera: {
     width: 200,
     height: 200,
-    marginBottom: 16,
+    marginBottom: 30,
   },
   cameraButton: {
     position: 'absolute',
-    bottom: 16,
-    marginBottom:20
+    marginBottom:30
   },
   photo: {
     width: 100,
@@ -200,10 +234,29 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: {
-    marginTop: 20,
+    marginTop: 8,
   },
   modal:{
    flex:0.4,
+  },
+  Date:{
+    width:'60%'
+  },
+  Card:{
+    marginTop:30,
+    height:130,
+  },
+  button2:{
+    marginLeft:'40%'
+  },
+  Footer:{
+    height:'12%'
   }
+
+  // label: {
+  //   marginRight: 8,
+  //   fontSize: 16,
+  //   fontWeight: 'bold',
+  // },
 });
 

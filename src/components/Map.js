@@ -69,6 +69,7 @@ export default function MapScreen() {
           latlng: data.markers,
           time: data.time,
           address: data.address,
+          memo:data.memo,
           name: data.name,
           photo: data.photo,
         };

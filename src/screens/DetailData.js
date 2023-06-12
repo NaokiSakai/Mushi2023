@@ -1,12 +1,20 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, Card, Paragraph } from 'react-native-paper';
+import { Timestamp } from 'firebase/firestore';
+import { format, setSeconds } from 'date-fns';
 
-//Makerをタップしたときに表示する情報
-
-//routeはMap.jsのmarkerがDetailDataに遷移する際に渡される引数
 export default function DetailData({ route }) {
   const marker = route.params.marker;
+
+  // Timestampを正しい時間の形式に変換する関数
+  const formatTimestamp = (timestamp) => {
+    const dateObject = timestamp.toDate();
+    const formattedTime = format(setSeconds(dateObject, 0), 'yyyy/MM/dd HH:mm');
+    return formattedTime;
+  };
+  // marker.timeを正しい形式に変換
+  const formattedTime = formatTimestamp(marker.time);
 
   return (
     <View style={styles.container}>
@@ -19,8 +27,9 @@ export default function DetailData({ route }) {
             <Avatar.Icon size={48} icon="bug" />
             <Paragraph style={styles.insect}>{marker.name}</Paragraph>
           </View>
-          <Paragraph style={styles.address}>住所：{marker.address}</Paragraph>
-          <Paragraph style={styles.time}>発見時刻：{marker.time}</Paragraph>
+          <Paragraph style={styles.address}>スポット名：{marker.address}</Paragraph>
+          <Paragraph style={styles.time}>発見時刻：{formattedTime}</Paragraph>
+          <Paragraph style={styles.time}>メモ：{marker.memo}</Paragraph>
         </Card.Content>
       </Card>
     </View>
