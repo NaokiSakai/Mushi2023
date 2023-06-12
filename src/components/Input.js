@@ -1,80 +1,103 @@
 import React, { useState } from 'react';
-import { TextInput, View, Text } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { TextInput, Button, Snackbar } from 'react-native-paper';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 
-const Input = () => {
+const firebaseConfig = {
+    apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
+    authDomain: "mushimapworld.firebaseapp.com",
+    databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
+    projectId: "mushimapworld",
+    storageBucket: "mushimapworld.appspot.com",
+    messagingSenderId: "717364972455",
+    appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
+    measurementId: "G-NGJBM2G1RB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+export default function Input() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
-  const handleSubmit = () => {
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Address:', address);
+  //firebaseの登録処理
+  const handlepress = async () => {
+    try {
+      const emailContent = {
+        name,
+        email,
+        message,
+      };
+
+      const docRef = await addDoc(collection(db, 'Email'), emailContent);
+      console.log('Document written with ID: ', docRef.id);
+
+      // Send email logic here
+      console.log('Sending email:', emailContent);
+
+      // Show snackbar to indicate successful email submission
+      setSnackbarVisible(true);
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
+  };
+
+  const handleSnackbarDismiss = () => {
+    setSnackbarVisible(false);
   };
 
   return (
-    <View style=
-    {{ 
-      height: 600,
-      width: '100%',
-      padding: 20, 
-      borderWidth: 1, 
-      borderColor: 'gray' 
-    }}>
-      <View style={{ marginBottom: 10 }}>
-        <Text>名前</Text>
-        <TextInput
-          value={name}
-          onChangeText={text => setName(text)}
-          style={{ 
-            width: '100%',
-            borderWidth: 1,
-            borderColor: 'gray', 
-            padding: 10 
-          }}
-        />
-      </View>
-      <View style={{ marginBottom: 10 }}>
-        <Text>Eメール</Text>
-        <TextInput
-          value={email}
-          onChangeText={text => setEmail(text)}
-          style={{ 
-            width: '100%',
-            borderWidth: 1, 
-            borderColor: 'gray', 
-            padding: 10 
-          }}
-        />
-      </View>
-      <View style={{ marginBottom: 10 }}>
-        <Text>お問い合わせ</Text>
-        <TextInput
-          value={address}
-          onChangeText={text => setAddress(text)}
-          style={{ 
-            height: 300,
-            width: '100%',
-            borderWidth: 1,
-            borderColor: 'gray', 
-            padding: 10 
-          }}
-          multiline
-        />
-      </View>
-      <View style={{ marginBottom: 10 }}>
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          style={{ backgroundColor: 'blue' }}
-          labelStyle={{ color: 'white' }}
-        >
-          送信
-        </Button>
-      </View>     
-    </View> 
+    <View style={styles.container}>
+      <TextInput
+        label="名前"
+        value={name}
+        onChangeText={text => setName(text)}
+        style={styles.input}
+      />
+      <TextInput        label="Eメール"
+        value={email}
+        onChangeText={text => setEmail(text)}
+        style={styles.input}
+        keyboardType="email-address"
+      />
+      <TextInput
+        label="メッセージ"
+        value={message}
+        onChangeText={text => setMessage(text)}
+        style={styles.input}
+        multiline
+        numberOfLines={5}
+      />
+      <Button mode="contained" onPress={handlepress} style={styles.button}>
+        送信
+      </Button>
+      <Snackbar
+        visible={isSnackbarVisible}
+        onDismiss={handleSnackbarDismiss}
+        duration={3000}
+      >
+        お問い合わせメールが送信されました
+      </Snackbar>
+    </View>
   );
-};
+  
+}
 
-export default Input;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  input: {
+    marginBottom: 10,
+  },
+  button: {
+    marginTop: 10,
+  },
+});
