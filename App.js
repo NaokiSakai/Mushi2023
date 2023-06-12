@@ -13,6 +13,7 @@ import MapScreen from './src/components/Map';
 import ContactForm from './src/screens/ContactForm';
 import { initializeApp } from 'firebase/app'; // Firebase v9から追加されたモジュール
 import { getDatabase } from 'firebase/database'; // 必要に応じて他のFirebaseサービスを追加でインポート
+import DetailData from './src/screens/DetailData';
 require('firebase/firestore');
 
 
@@ -27,7 +28,7 @@ const firebaseConfig = {
   measurementId: 'G-NGJBM2G1RB'
 };
 
-  const firebaseApp = initializeApp(firebaseConfig); // Firebaseアプリの初期化
+const firebaseApp = initializeApp(firebaseConfig); // Firebaseアプリの初期化
 
 const Stack = createStackNavigator();
 
@@ -60,6 +61,11 @@ export default function App() {
             name="ContactForm"
             component={ContactForm}
             options={{  headerTitle: 'お問合せ' }}
+          />
+           <Stack.Screen
+            name="DetailData"
+            component={DetailData}
+            options={{  headerTitle: 'スポット情報' }}
           />
         </Stack.Navigator>
         {/* <Footer /> */}

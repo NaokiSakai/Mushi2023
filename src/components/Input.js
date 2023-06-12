@@ -25,6 +25,7 @@ export default function Input() {
   const [message, setMessage] = useState('');
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
+  //firebaseの登録処理
   const handlepress = async () => {
     try {
       const emailContent = {
@@ -84,7 +85,9 @@ export default function Input() {
       </Snackbar>
     </View>
   );
+  
 }
+
 
 const styles = StyleSheet.create({
   container: {

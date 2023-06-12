@@ -1,14 +1,11 @@
 import React from 'react';
-import { Appbar, Menu, PaperProvider} from 'react-native-paper';
+import { Appbar, PaperProvider} from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 export default function HeaderBack() {
   //menu
   const [visible, setVisible] = React.useState(false);
-//   const openMenu = () => setVisible(true);
-//   const closeMenu = () => setVisible(false);
-//   //検索
   const _handleSearch = () => console.log('Searching');
   const [text, setText] = React.useState("");
   const navigation = useNavigation();

@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { TextInput, Button, IconButton, Card } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-// import { Camera } from 'expo-camera';
 import { Modal, Portal,  PaperProvider } from 'react-native-paper';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 
+//firebaseに必要な値
 const firebaseConfig = {
   apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
   authDomain: "mushimapworld.firebaseapp.com",
@@ -34,7 +34,6 @@ export default function DateRegister({ route}) {
   const markers = route.params.markers;
   console.log(markers);
   const navigation = useNavigation();
-  //const cameraRef = React.useRef(null);
 
   React.useEffect(() => {
     (async () => {
@@ -55,6 +54,7 @@ export default function DateRegister({ route}) {
         justifyContent: 'center',
       };
 
+  //写真を撮る
   const handleTakePhoto = async () => {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -67,7 +67,7 @@ export default function DateRegister({ route}) {
       setPhoto(result.uri);
     }
   };
-
+  //写真を選択する
   const handleChoosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -80,7 +80,7 @@ export default function DateRegister({ route}) {
       setPhoto(result.uri);
     }
   };
-
+  //firebaseへの登録処理
   const handleRegistration = async() => {
     // 登録処理を実行する
     try {

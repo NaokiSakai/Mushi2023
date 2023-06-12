@@ -4,7 +4,6 @@ import {
   Text,
   View,
   Platform,
-  TouchableOpacity,
   Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -12,23 +11,22 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView, { Marker } from 'react-native-maps';
 import Footer from './Footer';
-import { useRoute } from '@react-navigation/native';
-import { CustomMarker } from './CustomMarker';
+import { useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { CustomMarker } from './CustomMarker';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
-  authDomain: "mushimapworld.firebaseapp.com",
-  databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
-  projectId: "mushimapworld",
-  storageBucket: "mushimapworld.appspot.com",
-  messagingSenderId: "717364972455",
-  appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
-  measurementId: "G-NGJBM2G1RB"
+  // Firebaseの設定情報
+    apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
+    authDomain: "mushimapworld.firebaseapp.com",
+    databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
+    projectId: "mushimapworld",
+    storageBucket: "mushimapworld.appspot.com",
+    messagingSenderId: "717364972455",
+    appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
+    measurementId: "G-NGJBM2G1RB"
 };
-
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -40,7 +38,9 @@ export default function MapScreen() {
   const [longitude, setLongitude] = useState(null);
   const [message, setMessage] = useState('位置情報取得中');
   const [markers, setMarkers] = useState([]);
+  const navigation = useNavigation();
 
+  //現在値を取得移動
   const getLocationAsync = async () => {
     console.log('現在位置取得中');
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -57,21 +57,28 @@ export default function MapScreen() {
     setLongitude(location.coords.longitude);
   };
 
+  //firebaseからデータを取得
   const fetchMarkers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'Register'));
       const markersData = [];
       querySnapshot.forEach((doc) => {
-      const data = doc.data().markers;
-      markersData.push(data); // マーカーデータを追加する
-      console.log(data);
+        const data = doc.data();
+        //取得したdataを成形
+        const markerData = {
+          latlng: data.markers,
+          time: data.time,
+          address: data.address,
+          name: data.name,
+          photo: data.photo,
+        };
+        markersData.push(markerData);
       });
       setMarkers(markersData);
     } catch (error) {
       console.error(error);
     }
   };
-  
 
   useEffect(() => {
     getLocationAsync();
@@ -80,6 +87,10 @@ export default function MapScreen() {
 
   const handleReload = () => {
     getLocationAsync();
+  };
+
+  const handleFetchMarkers = async () => {
+    await fetchMarkers();
   };
 
   if (latitude && longitude) {
@@ -101,11 +112,13 @@ export default function MapScreen() {
           }}
           showsUserLocation={true}
         >
+          {/* 形成した配列,markerの数だけ回す */}
           {markers.map((marker, index) => (
             <Marker
               key={index}
-              coordinate={marker.latlng}
+              coordinate={marker.latlng.latlng}
               callout={<CustomMarker marker={marker} />}
+              onPress={() => navigation.navigate('DetailData', { marker: marker })}
             >
               <Image
                 source={require('../../assets/beetle_1742.png')}
@@ -113,29 +126,29 @@ export default function MapScreen() {
               />
             </Marker>
           ))}
-
         </MapView>
-        <Footer handleReload={handleReload} />
+        <Footer onGetLocation={handleReload} onFetchMarkers={handleFetchMarkers} />
       </View>
     );
   }
 
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
-      <Text>{message}</Text>
+      <Text>現在地取得中</Text>
     </View>
-   );
-  }
-      
-      
-  const styles = StyleSheet.create({
+  );
+}
+
+
+const styles = StyleSheet.create({
   container: {
-  paddingTop: STATUS_BAR_HEIGHT,
-  flex: 1,
-  backgroundColor: '#fff',
-  justifyContent: 'center',
+    paddingTop: STATUS_BAR_HEIGHT,
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
   },
-  });
-  
-      
+});
+
+
