@@ -10,9 +10,7 @@ const BOTTOM_APPBAR_HEIGHT = 65;
 export default function Footer({ onGetLocation, onFetchMarkers }) {
   const { bottom } = useSafeAreaInsets();
   const navigation = useNavigation();
-
   
-
   const handleGetLocation = () => {
     onGetLocation();
   };

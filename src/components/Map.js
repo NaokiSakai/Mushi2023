@@ -4,7 +4,6 @@ import {
   Text,
   View,
   Platform,
-  TouchableOpacity,
   Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -12,7 +11,7 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView, { Marker } from 'react-native-maps';
 import Footer from './Footer';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { CustomMarker } from './CustomMarker';
@@ -41,6 +40,7 @@ export default function MapScreen() {
   const [markers, setMarkers] = useState([]);
   const navigation = useNavigation();
 
+  //現在値を取得移動
   const getLocationAsync = async () => {
     console.log('現在位置取得中');
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -57,12 +57,14 @@ export default function MapScreen() {
     setLongitude(location.coords.longitude);
   };
 
+  //firebaseからデータを取得
   const fetchMarkers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'Register'));
       const markersData = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
+        //取得したdataを成形
         const markerData = {
           latlng: data.markers,
           time: data.time,
@@ -110,6 +112,7 @@ export default function MapScreen() {
           }}
           showsUserLocation={true}
         >
+          {/* 形成した配列,markerの数だけ回す */}
           {markers.map((marker, index) => (
             <Marker
               key={index}

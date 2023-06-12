@@ -1,16 +1,15 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Platform,
-  TouchableOpacity,
   Image,
 } from 'react-native';
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import MapView, { Marker } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -35,6 +34,7 @@ const MapPin = () => {
     getLocationAsync();
   }, []);
 
+  //現在値の経度と緯度を取得しsetする処理
   const getLocationAsync = async () => {
     console.log('現在位置取得中');
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -51,6 +51,7 @@ const MapPin = () => {
     setLongitude(location.coords.longitude);
   };
 
+  //タップした位置の経度緯度を取得
   const handlePress = (event) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
     alert(`緯度: ${latitude}, 経度: ${longitude}`);
@@ -65,7 +66,7 @@ const MapPin = () => {
     
 
     setMarkers(newMarkers);
-
+    //ページ遷移先にタップした経度緯度のデータを渡す
     navigation.navigate('DateRegister', { markers: newMarkers });
 
   };
@@ -93,25 +94,7 @@ const MapPin = () => {
           showsUserLocation={true}
           onPress={handlePress}
         >
-        {/* {this.state.markers.map((markers, index) => (
-              <Marker
-                key={index}
-                coordinate={markers.latlng}
-              >
-                <Image source={require('../../assets/beetle_1742.png')} style={{height: 50, width:50 }} />
-              </Marker>
-             ))} */}
-
           </MapView>
-          {/* <TouchableOpacity onPress={this.getLocationAsync}style={styles.now}>
-            <Text>現在地取得</Text> 
-            <Image 
-              resizeMode='contain'
-              source={require(`../../assets/favicon.png`)} 
-              style={{width:20,height:20,transform: [{ rotate: '340deg' }], }}
-              />
-          </TouchableOpacity> */}
-
       </View>
     );
   }

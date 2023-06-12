@@ -2,6 +2,9 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, Card, Paragraph } from 'react-native-paper';
 
+//Makerをタップしたときに表示する情報
+
+//routeはMap.jsのmarkerがDetailDataに遷移する際に渡される引数
 export default function DetailData({ route }) {
   const marker = route.params.marker;
 
