@@ -4,6 +4,16 @@ import { TextInput, Button, Snackbar } from 'react-native-paper';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { collection, addDoc } from 'firebase/firestore';
+import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
+
+// カスタムのテーマオブジェクトを作成
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#2E8B57', // 薄暗い緑色に設定
+  },
+};
 
 const firebaseConfig = {
     apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
@@ -52,14 +62,18 @@ export default function Input() {
   };
 
   return (
-    <View style={styles.container}>
+    <PaperProvider theme={theme}>
+      <View style={styles.container}>
       <TextInput
         label="名前"
         value={name}
         onChangeText={text => setName(text)}
         style={styles.input}
+        underlineColor="#2E8B57" // テキスト入力範囲の下線の色を薄緑色に設定
+
       />
-      <TextInput        label="Eメール"
+      <TextInput        
+        label="Eメール"
         value={email}
         onChangeText={text => setEmail(text)}
         style={styles.input}
@@ -84,6 +98,8 @@ export default function Input() {
         お問い合わせメールが送信されました
       </Snackbar>
     </View>
+    </PaperProvider>
+   
   );
   
 }
