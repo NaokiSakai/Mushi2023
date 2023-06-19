@@ -29,6 +29,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
+
 export default function Input() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -39,6 +41,7 @@ export default function Input() {
   const [isNameEmpty, setNameEmpty] = useState(false);
   const [isEmailEmpty, setEmailEmpty] = useState(false);
   const [isMessageEmpty, setMessageEmpty] = useState(false);
+
 
   //firebaseの登録処理
   const handlepress = async () => {
@@ -62,9 +65,9 @@ export default function Input() {
       if (name && email && message) {
         try {
           const emailContent = {
-            name,
-            email,
-            message,
+          name,
+          email,
+          message,
           };
 
           const docRef = await addDoc(collection(db, 'Email'), emailContent);
@@ -83,17 +86,7 @@ export default function Input() {
         } catch (error) {
         console.error('Error adding document: ', error);
         }  
-      } else {
-        if (!name) {
-          setNameEmpty(true);
-        }
-        if (!email) {
-          setEmailEmpty(true);
-        }
-        if (!message) {
-          setMessageEmpty(true);
-        }
-      }
+      } 
       }  
   };
   const handleSnackbarDismiss = () => {
@@ -149,6 +142,7 @@ export default function Input() {
             正しいEメールアドレスの形式ではありません
             </Text>
           )}
+
           <TextInput
             label={`メッセージ (${messageCharacterCount}/${messageCharacterLimit}文字)`}
             value={message}
@@ -158,11 +152,6 @@ export default function Input() {
             numberOfLines={10}
             color="#2E8B57" // テキストの色を薄緑色に設定
           />
-          <Text style={styles.errorText}>
-            {isNameEmpty && "名前が入力されていません"}
-            {isEmailEmpty && "Eメールが入力されていません"}
-            {isMessageEmpty && "メッセージが入力されていません"}
-          </Text>
           {isMessageMaxLengthReached && (
             <Text style={styles.maxLengthMessage}>
               これ以上入力できません
@@ -182,6 +171,7 @@ export default function Input() {
           mode="contained" 
           onPress={handlepress} 
           style={styles.button}
+          disabled={!name || !email || !message || !isEmailValid || isMessageMaxLengthReached}
           >
             送信
           </Button>
