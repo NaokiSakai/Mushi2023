@@ -37,19 +37,7 @@ export default function DateRegister({ route}) {
   const [photo, setPhoto] = useState(null);
   const [cameraPermission, setCameraPermission] = useState(null);
   const [photoSelected, setPhotoSelected] = useState(false);
-  const markers = route.params.markers;
-  console.log(markers);
-  const navigation = useNavigation();
-
-  React.useEffect(() => {
-    (async () => {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      setCameraPermission(status === 'granted');
-    })();
-  }, []);
-
   const [visible, setVisible] = React.useState(false);
-
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const containerStyle = { 
@@ -61,6 +49,16 @@ export default function DateRegister({ route}) {
         width:'90%',
         marginLeft:'5%'
       };
+  const markers = route.params.markers;
+  console.log(markers);
+  const navigation = useNavigation();
+
+  React.useEffect(() => {
+    (async () => {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      setCameraPermission(status === 'granted');
+    })();
+  }, []);
 
   //写真を撮る
   const handleTakePhoto = async () => {

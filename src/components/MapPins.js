@@ -11,9 +11,10 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import MapView from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
+import HeaderBack from './HeaderBack';
 
 
-const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : statusbar.currentHeight;
+// const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : statusbar.currentHeight;
 
 const MapPin = () => {
   const navigation = useNavigation();
@@ -74,6 +75,9 @@ const MapPin = () => {
   if (latitude && longitude) {
     return (
       <View style={styles.container}>
+        <View style={styles.header}>
+          <HeaderBack setLatitude={setLatitude} setLongitude={setLongitude} />
+        </View>
         <View style={styles.warningTextContainer}>
           <Text style={styles.warningText}>タップして情報を追加してください</Text>
         </View>
@@ -94,11 +98,11 @@ const MapPin = () => {
           showsUserLocation={true}
           onPress={handlePress}
         >
-          </MapView>
+        </MapView>
       </View>
     );
   }
-
+  
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
@@ -111,7 +115,6 @@ export default MapPin;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: STATUS_BAR_HEIGHT,
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     padding: 10,
-    marginTop: 75,
+    marginTop: 5,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -139,5 +142,9 @@ const styles = StyleSheet.create({
     right: 10,
     top: 30,
   },
+  header:{
+    height:100
+  }
 });
+
 

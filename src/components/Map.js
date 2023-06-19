@@ -15,6 +15,8 @@ import { useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { CustomMarker } from './CustomMarker';
+import Headers from './Headers';
+
 
 const firebaseConfig = {
   // Firebaseの設定情報
@@ -36,6 +38,8 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 export default function MapScreen() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
+  const [latitude2, setLatitude2] = useState(null);
+  const [longitude2, setLongitude2] = useState(null);
   const [message, setMessage] = useState('位置情報取得中');
   const [markers, setMarkers] = useState([]);
   const navigation = useNavigation();
@@ -97,6 +101,10 @@ export default function MapScreen() {
   if (latitude && longitude) {
     return (
       <View style={styles.container}>
+        <View style={styles.Header}>
+        <Headers setLatitude={setLatitude}
+            setLongitude={setLongitude} />
+        </View>
         <MapView
           style={{ flex: 1 }}
           initialRegion={{
@@ -145,11 +153,13 @@ export default function MapScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: STATUS_BAR_HEIGHT,
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
   },
+  Header:{
+    height:110,
+  }
 });
 
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Header from './src/components/Headers'
+// import Header from './src/components/Headers'
 import HeaderBack from './src/components/HeaderBack';
 import Footer from './src/components/Footer'
 import MainMapPage from './src/screens/MainMapPage'
@@ -40,12 +40,14 @@ export default function App() {
           <Stack.Screen
             name="MainMapPage"
             component={MainMapPage}
-            options={{ header: () => <Header title="Main Map Page" /> }}
+            // options={{ header: () => <Header title="Main Map Page" /> }}
+            options={{ headerShown: false }} 
           />
           <Stack.Screen
             name="PinMapPage"
             component={PinMapPage}
-            options={{ header: () => <HeaderBack title="Pin Map Page" /> }}
+            // options={{ header: () => <HeaderBack title="Pin Map Page" /> }}
+            options={{ headerShown: false }} 
           />
           <Stack.Screen
             name="DateRegister"
@@ -55,7 +57,8 @@ export default function App() {
           <Stack.Screen
             name="MapScreen"
             component={MapScreen}
-            options={{ header: () => <Header title="Map Screen" /> }}
+            // options={{ header: () => <Header title="Map Screen" latitude={latitude} longitude={longitude} /> }}
+            options={{ headerShown: false }} 
           />
            <Stack.Screen
             name="ContactForm"
