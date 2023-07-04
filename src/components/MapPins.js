@@ -3,8 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Platform,
-  Image,
 } from 'react-native';
 
 import * as Location from 'expo-location';
@@ -12,9 +10,7 @@ import * as Permissions from 'expo-permissions';
 import MapView from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import HeaderBack from './HeaderBack';
-
-
-// const STATUS_BAR_HEIGHT = Platform.OS == 'ios' ? 20 : statusbar.currentHeight;
+import { ActivityIndicator, MD2Colors } from 'react-native-paper';
 
 const MapPin = () => {
   const navigation = useNavigation();
@@ -28,6 +24,7 @@ const MapPin = () => {
         latitude: undefined,
         longitude: undefined,
       },
+      location:'',
     },
   ]);
 
@@ -44,32 +41,37 @@ const MapPin = () => {
       return;
     }
     const location = await Location.getCurrentPositionAsync({});
-    let longitude = '経度:' + JSON.stringify(location.coords.longitude);
-    let latitude = '緯度:' + JSON.stringify(location.coords.latitude);
-    console.log(longitude);
-    console.log(latitude);
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
   };
 
   //タップした位置の経度緯度を取得
-  const handlePress = (event) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    alert(`緯度: ${latitude}, 経度: ${longitude}`);
-    const newMarkers = 
-      // ...markers,
-      {
-        latlng: {
-          latitude: latitude,
-          longitude: longitude,
-        },
-      };
-    
-
-    setMarkers(newMarkers);
-    //ページ遷移先にタップした経度緯度のデータを渡す
-    navigation.navigate('DateRegister', { markers: newMarkers });
-
+  const handlePress =async(event) => {
+      try {
+        const { latitude, longitude } = event.nativeEvent.coordinate;
+        const location = await Location.reverseGeocodeAsync({ latitude, longitude });
+        if (location.length > 0) {
+          const address = location[0];
+          // 住所情報の取得
+          const formattedAddress = `${address.postalCode} ${address.country} ${address.region} ${address.city} ${address.street}`;
+          const newMarkers = 
+          // ...markers,
+          {
+            latlng: {
+              latitude: latitude,
+              longitude: longitude,
+            },
+            location: formattedAddress
+          };
+          setMarkers(newMarkers);
+          //ページ遷移先にタップした経度緯度のデータを渡す
+          navigation.navigate('DateRegister', { markers: newMarkers });
+        } else {
+          console.log('住所情報が見つかりませんでした。');
+        }
+      } catch (error) {
+        console.log('逆ジオコーディングエラー:', error);
+      }
   };
 
   if (latitude && longitude) {
@@ -105,7 +107,7 @@ const MapPin = () => {
   
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
+      <ActivityIndicator animating={true} color={MD2Colors.green800} size={'large'} />
       <Text>{message}</Text>
     </View>
   );
@@ -122,9 +124,9 @@ const styles = StyleSheet.create({
   warningTextContainer: {
     position: 'relative',
     width: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: '#2E8B57',
     padding: 10,
-    marginTop: 5,
+    marginTop: 13,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -133,9 +135,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   warningText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'black',
+    fontSize:15,
+    fontWeight:'bold',
+    color:'white',
+    textAlign:'center',
   },
   now: {
     position: 'absolute',

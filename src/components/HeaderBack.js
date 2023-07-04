@@ -1,11 +1,18 @@
 import React from 'react';
-import { Appbar, Menu, Provider } from 'react-native-paper';
+import { Appbar, Provider, DefaultTheme } from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 import OpenCageGeocoder from 'opencage-api-client';
 import { useNavigation } from '@react-navigation/native';
 
-export default function HeaderBack({back,setLatitude, setLongitude}) {
-    const navigation = useNavigation();
+export default function HeaderBack({setLatitude, setLongitude}) {
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#2E8B57', // 薄暗い緑色に設定
+    },
+  };
+  const navigation = useNavigation();
   // 検索
   const _handleSearch = async () => {
     try {
@@ -34,8 +41,12 @@ export default function HeaderBack({back,setLatitude, setLongitude}) {
     <Provider>
       <Appbar.Header>
       <Appbar.BackAction onPress={() => navigation.navigate('MainMapPage')} />
-        <TextInput label='検索するスポットを入力' 
-        mode='outlined' value={text} onChangeText={text => setText(text)}
+        <TextInput
+        label='検索するスポットを入力' 
+        mode='outlined' 
+        theme={theme}
+        value={text} 
+        onChangeText={text => setText(text)}
         style={{width:"70%",marginLeft:"3%",marginBottom:"1.5%"}}/>
         <Appbar.Action icon="magnify" onPress={_handleSearch} /> 
       </Appbar.Header>

@@ -9,13 +9,17 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import MapView, { Marker } from 'react-native-maps';
+import { Marker } from 'react-native-maps';
 import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { CustomMarker } from './CustomMarker';
+import { getFirestore, collection, getDocs, where,query} from 'firebase/firestore';
 import Headers from './Headers';
+import { Provider } from 'react-native-paper';
+import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import MapView  from "react-native-map-clustering";
+import includes from 'includes';
+
 
 
 const firebaseConfig = {
@@ -38,11 +42,12 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 export default function MapScreen() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [latitude2, setLatitude2] = useState(null);
-  const [longitude2, setLongitude2] = useState(null);
-  const [message, setMessage] = useState('位置情報取得中');
+  const [message, setMeMssage] = useState('位置情報取得中');
   const [markers, setMarkers] = useState([]);
+  const [insectName, setInsectName] = useState('');
+  const [visibleMarkers, setVisibleMarkers] = useState([]);
   const navigation = useNavigation();
+  const [showMessage, setShowMessage] = useState(false);
 
   //現在値を取得移動
   const getLocationAsync = async () => {
@@ -53,66 +58,118 @@ export default function MapScreen() {
       return;
     }
     const location = await Location.getCurrentPositionAsync({});
-    let longitude = '経度:' + JSON.stringify(location.coords.longitude);
-    let latitude = '緯度:' + JSON.stringify(location.coords.latitude);
-    console.log(longitude);
-    console.log(latitude);
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
   };
 
-  //firebaseからデータを取得
-  const fetchMarkers = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'Register'));
-      const markersData = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        //取得したdataを成形
+//マップの可視範囲が変更された時に実行される関数
+const handleRegionChange = async (region) => {
+  const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
+
+  
+  // 可視範囲内のピンのクエリを作成
+  const registerCollection = collection(db, 'Register');
+  const querySnapshot = await getDocs(
+    query(
+      registerCollection,
+      where('markers.latlng.latitude', '>=', latitude - latitudeDelta / 2),
+      where('markers.latlng.latitude', '<=', latitude + latitudeDelta / 2)
+    )
+  );
+
+
+    // Firebaseから取得件数が10件以下の場合の処理
+    const visibleMarkersData = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (
+        data.markers.latlng.longitude >= longitude - longitudeDelta / 2 &&
+        data.markers.latlng.longitude <= longitude + longitudeDelta / 2 &&
+        insectName == ''
+      ) {
         const markerData = {
           latlng: data.markers,
+          location: data.location,
           time: data.time,
           address: data.address,
-          memo:data.memo,
+          memo: data.memo,
           name: data.name,
           photo: data.photo,
         };
-        markersData.push(markerData);
-      });
-      setMarkers(markersData);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+        visibleMarkersData.push(markerData);
+        if(visibleMarkersData.length>30){
+            console.log("############################################################################")
+            setShowMessage(true);
+        }else{
+          console.log(markerData);
+          setShowMessage(false);
+        }
+      }else if(
+      data.markers.latlng.longitude >= longitude - longitudeDelta / 2 &&
+      data.markers.latlng.longitude <= longitude + longitudeDelta / 2 &&
+      typeof data.name === 'string' && data.name.includes(insectName)){
+        const markerData = {
+          latlng: data.markers,
+          location: data.location,
+          time: data.time,
+          address: data.address,
+          memo: data.memo,
+          name: data.name,
+          photo: data.photo,
+        };
+        visibleMarkersData.push(markerData);
+        if(visibleMarkersData.length>30){
+          console.log("############################################################################")
+          setShowMessage(true);
+      }else{
+        console.log(markerData);
+        setShowMessage(false);
+      }
+      }
+    });
+    setVisibleMarkers(visibleMarkersData);
+    // setShowMessage(false);
+};
 
   useEffect(() => {
     getLocationAsync();
-    fetchMarkers();
+    // fetchMarkers();
   }, []);
+
+  useEffect(() => {
+      handleRegionChange({
+        latitude: latitude,
+        longitude: longitude,
+        latitudeDelta: 1,
+        longitudeDelta: 1,
+      });
+  }, [latitude, longitude, insectName]);
 
   const handleReload = () => {
     getLocationAsync();
   };
 
   const handleFetchMarkers = async () => {
-    await fetchMarkers();
+    await handleRegionChange({
+      latitude: latitude,
+      longitude: longitude,
+      latitudeDelta: 0.002,
+      longitudeDelta: 0.002,});
   };
 
   if (latitude && longitude) {
     return (
       <View style={styles.container}>
-        <View style={styles.Header}>
-        <Headers setLatitude={setLatitude}
-            setLongitude={setLongitude} />
-        </View>
+        <Provider>
+        <Headers setLatitude={setLatitude} setLongitude={setLongitude} setInsectName={setInsectName}/>
+        <View style={{ flex: 1 }} >
+        {showMessage && (
+              <View style={styles.messageContainer}>
+                <Text style={styles.messageText}>ピンが多すぎます。マップを拡大してください</Text>
+              </View>
+         )}
         <MapView
           style={{ flex: 1 }}
-          initialRegion={{
-            latitude: latitude,
-            longitude: longitude,
-            latitudeDelta: 0.002,
-            longitudeDelta: 0.002,
-          }}
           region={{
             latitude: latitude,
             longitude: longitude,
@@ -120,13 +177,23 @@ export default function MapScreen() {
             longitudeDelta: 0.002,
           }}
           showsUserLocation={true}
+          clusterColor="#2E8B57"
+          clusterStyle={{
+            width: 100,
+            height: 100,
+            borderRadius: 25,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#2E8B57',
+          }}
+          animationEnabled={false}
+          onRegionChangeComplete={handleRegionChange} // マップの可視範囲が変更された時に実行される関数を設定
         >
-          {/* 形成した配列,markerの数だけ回す */}
-          {markers.map((marker, index) => (
+
+          {showMessage == false && visibleMarkers.map((marker, index) => (
             <Marker
               key={index}
               coordinate={marker.latlng.latlng}
-              callout={<CustomMarker marker={marker} />}
               onPress={() => navigation.navigate('DetailData', { marker: marker })}
             >
               <Image
@@ -136,15 +203,46 @@ export default function MapScreen() {
             </Marker>
           ))}
         </MapView>
+        {/* <MapView
+            style={{ flex: 1 }}
+            initialRegion={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.002,
+              longitudeDelta: 0.002,
+            }}
+            region={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.002,
+              longitudeDelta: 0.002,
+            }}
+            showsUserLocation={true}
+          >
+            {markers.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={marker.latlng.latlng}
+                onPress={() => navigation.navigate('DetailData', { marker: marker })}
+              >
+                <Image
+                  source={require('../../assets/beetle_1742.png')}
+                  style={{ height: 50, width: 50 }}
+                />
+              </Marker>
+            ))}
+          </MapView> */}
+        </View>
         <Footer onGetLocation={handleReload} onFetchMarkers={handleFetchMarkers} />
-      </View>
+        </Provider>
+      </View>     
     );
   }
 
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Image source={require('../../assets/wood_kabutomushi_11494.png')} />
+      <ActivityIndicator animating={true} color={MD2Colors.green800} size={'large'} />
       <Text>現在地取得中</Text>
     </View>
   );
@@ -159,6 +257,26 @@ const styles = StyleSheet.create({
   },
   Header:{
     height:110,
+  },
+  messageText:{
+    fontSize:15,
+    fontWeight:'bold',
+    color:'white',
+    textAlign:'center',
+  },
+  messageContainer:{
+    position: 'relative',
+    width: '100%',
+    backgroundColor: '#2E8B57',
+    padding: 10,
+    marginTop: 2,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+
   }
 });
 

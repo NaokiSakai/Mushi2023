@@ -1,6 +1,6 @@
 // Footer.js
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet} from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { TextInput, Button, IconButton, Card ,Text} from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-import { Modal, Portal,  PaperProvider } from 'react-native-paper';
+import { Modal, Portal,  PaperProvider,DefaultTheme } from 'react-native-paper';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { collection, addDoc } from 'firebase/firestore';
@@ -38,6 +38,8 @@ export default function DateRegister({ route}) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [photoSelected, setPhotoSelected] = useState(false);
   const [visible, setVisible] = React.useState(false);
+  const markers = route.params.markers;
+  const [location, setLocation] = useState(markers.location);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const containerStyle = { 
@@ -49,7 +51,6 @@ export default function DateRegister({ route}) {
         width:'90%',
         marginLeft:'5%'
       };
-  const markers = route.params.markers;
   console.log(markers);
   const navigation = useNavigation();
 
@@ -96,6 +97,8 @@ export default function DateRegister({ route}) {
     setPhotoSelected(false);
   };
 
+  
+
   //firebaseへの登録処理
   const handleRegistration = async() => {
     // 登録処理を実行する
@@ -107,6 +110,7 @@ export default function DateRegister({ route}) {
         time,
         photo,
         markers,
+        location
       };
 
       const docRef = await addDoc(collection(db, 'Register'), RegisterContent)
@@ -123,7 +127,7 @@ export default function DateRegister({ route}) {
   };
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
     <View style={styles.container}>
         <Portal>
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
@@ -146,6 +150,12 @@ export default function DateRegister({ route}) {
         label="スポット名"
         value={address}
         onChangeText={(text) => setAddress(text)}
+        style={styles.input}
+      />
+      <TextInput
+        label="住所"
+        value={location}
+        onChangeText={(text) => setLocation(text)}
         style={styles.input}
       />
        <TextInput
@@ -230,6 +240,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 16,
+    backgroundColor: "#EFFBF5",
   },
   button: {
     marginTop: 8,
@@ -245,7 +256,10 @@ const styles = StyleSheet.create({
     height:130,
   },
   button2:{
-    marginLeft:'40%'
+    // alignSelf: 'center',
+    height: '50%',
+    width: '50%',
+    marginLeft:'25%'
   },
   Footer:{
     height:'12%'
@@ -257,4 +271,12 @@ const styles = StyleSheet.create({
   //   fontWeight: 'bold',
   // },
 });
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#2E8B57', // 薄暗い緑色に設定
+  },
+};
 
