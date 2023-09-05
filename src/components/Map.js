@@ -13,12 +13,12 @@ import { Marker } from 'react-native-maps';
 import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, where,query} from 'firebase/firestore';
+import { getFirestore, collection, getDocs, where,query,limit,} from 'firebase/firestore';
+import { select } from 'firebase/firestore';
 import Headers from './Headers';
 import { Provider } from 'react-native-paper';
 import { ActivityIndicator, MD2Colors } from 'react-native-paper';
-import MapView  from "react-native-map-clustering";
-import includes from 'includes';
+import MapView from "react-native-map-clustering";
 
 
 
@@ -73,28 +73,31 @@ const handleRegionChange = async (region) => {
     query(
       registerCollection,
       where('markers.latlng.latitude', '>=', latitude - latitudeDelta / 2),
-      where('markers.latlng.latitude', '<=', latitude + latitudeDelta / 2)
-    )
+      where('markers.latlng.latitude', '<=', latitude + latitudeDelta / 2),
+      limit(20),
+    ),
   );
 
 
     // Firebaseから取得件数が10件以下の場合の処理
     const visibleMarkersData = [];
     querySnapshot.forEach((doc) => {
-      const data = doc.data();
+      const markersData = doc.data().markers;
+      const nameData = doc.data().name;
+      console.log(markersData);
       if (
-        data.markers.latlng.longitude >= longitude - longitudeDelta / 2 &&
-        data.markers.latlng.longitude <= longitude + longitudeDelta / 2 &&
+        markersData.latlng.longitude >= longitude - longitudeDelta / 2 &&
+        markersData.latlng.longitude <= longitude + longitudeDelta / 2 &&
         insectName == ''
       ) {
         const markerData = {
-          latlng: data.markers,
-          location: data.location,
-          time: data.time,
-          address: data.address,
-          memo: data.memo,
-          name: data.name,
-          photo: data.photo,
+          latlng: markersData,
+          name: nameData,
+          // location: data.location,
+          // time: data.time,
+          // address: data.address,
+          // memo: data.memo,
+          // photo: data.photo,
         };
         visibleMarkersData.push(markerData);
         if(visibleMarkersData.length>30){
@@ -105,17 +108,17 @@ const handleRegionChange = async (region) => {
           setShowMessage(false);
         }
       }else if(
-      data.markers.latlng.longitude >= longitude - longitudeDelta / 2 &&
-      data.markers.latlng.longitude <= longitude + longitudeDelta / 2 &&
-      typeof data.name === 'string' && data.name.includes(insectName)){
+        markersData.latlng.longitude >= longitude - longitudeDelta / 2 &&
+        markersData.latlng.longitude <= longitude + longitudeDelta / 2 &&
+      typeof nameData === 'string' && nameData.includes(insectName)){
         const markerData = {
-          latlng: data.markers,
-          location: data.location,
-          time: data.time,
-          address: data.address,
-          memo: data.memo,
-          name: data.name,
-          photo: data.photo,
+          latlng: markersData,
+          name: nameData,
+          // location: data.location,
+          // time: data.time,
+          // address: data.address,
+          // memo: data.memo,
+          // photo: data.photo,
         };
         visibleMarkersData.push(markerData);
         if(visibleMarkersData.length>30){
@@ -203,35 +206,6 @@ const handleRegionChange = async (region) => {
             </Marker>
           ))}
         </MapView>
-        {/* <MapView
-            style={{ flex: 1 }}
-            initialRegion={{
-              latitude: latitude,
-              longitude: longitude,
-              latitudeDelta: 0.002,
-              longitudeDelta: 0.002,
-            }}
-            region={{
-              latitude: latitude,
-              longitude: longitude,
-              latitudeDelta: 0.002,
-              longitudeDelta: 0.002,
-            }}
-            showsUserLocation={true}
-          >
-            {markers.map((marker, index) => (
-              <Marker
-                key={index}
-                coordinate={marker.latlng.latlng}
-                onPress={() => navigation.navigate('DetailData', { marker: marker })}
-              >
-                <Image
-                  source={require('../../assets/beetle_1742.png')}
-                  style={{ height: 50, width: 50 }}
-                />
-              </Marker>
-            ))}
-          </MapView> */}
         </View>
         <Footer onGetLocation={handleReload} onFetchMarkers={handleFetchMarkers} />
         </Provider>

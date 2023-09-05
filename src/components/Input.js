@@ -39,6 +39,7 @@ export default function Input() {
   const [isNameEmpty, setNameEmpty] = useState(false);
   const [isEmailEmpty, setEmailEmpty] = useState(false);
   const [isMessageEmpty, setMessageEmpty] = useState(false);
+  
 
   //firebaseの登録処理
   const handlepress = async () => {

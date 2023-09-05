@@ -118,11 +118,6 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
                       style={{ width: 260, marginLeft: '13%',}}
                       theme={theme}
                     />
-                    {/* <Appbar.Action
-                      icon="arrow-up-drop-circle-outline"
-                      onPress={handleAdditionalInputToggle}
-                      style={{ width: 20, height: 25, marginLeft: 10 }}
-                    /> */}
                   </View>
                 )}
             </View>
