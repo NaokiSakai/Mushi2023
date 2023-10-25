@@ -1,10 +1,11 @@
 import React, { useState,useEffect } from 'react';
-import { StyleSheet, View, Linking, ScrollView } from 'react-native';
+import { StyleSheet, View, Linking, ScrollView,Image,TouchableOpacity } from 'react-native';
 import { Avatar, Card, Paragraph, Text, Button, IconButton, DefaultTheme, Provider, TextInput, MD3Colors,Divider} from 'react-native-paper';
 import Modal from "react-native-modal";
 import { format, setSeconds } from 'date-fns';
 import { getFirestore, collection, getDocs, where,query,limit, QuerySnapshot,addDoc,updateDoc} from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
+import * as ImagePicker from 'expo-image-picker';
 
 const firebaseConfig = {
   // Firebaseの設定情報
@@ -33,14 +34,21 @@ export default function DetailDate({ route }) {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [visibleComment,setVisibleComment] =useState([]);
   const [openedPostData, setOpenedPostData] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [cameraPermission, setCameraPermission] = useState(null);
+  const [photoSelected, setPhotoSelected] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+const [selectedImage, setSelectedImage] = useState(null);
+
   const containerStyle = {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center',
+    //justifyContent: 'center',
     width: '90%',
-    height: '50%',
+    maxHeight: '60%', // 最大の高さ
+    minHeight: '38%', // 最小の高さ
     marginLeft: '0%'
   };
 
@@ -57,7 +65,7 @@ export default function DetailDate({ route }) {
 
   const { marker } = route.params;
 
-  const getAllData = async () =>{
+  const getAllData = async () => {
   const registerCollection = collection(db, 'Register');
   const querySnapshot = await getDocs(
     query(
@@ -148,12 +156,12 @@ export default function DetailDate({ route }) {
         // commentsフィールドが既に存在する場合は、既存の配列にコメントを追加
         const timestamp =new Date().toLocaleString();
         console.log(timestamp);
-        const updatedComments = docData.comments ? [...docData.comments, { name, comment, timestamp}] : [{ name, comment,timestamp }];
+        const updatedComments = docData.comments ? [...docData.comments, { name, comment, timestamp,photo}] : [{ name, comment,timestamp,photo }];
   
         // ドキュメントの更新
         await updateDoc(docRef, { comments: updatedComments });
         setVisibleComment(updatedComments);
-        console.log('コメントが追加されました。');
+        setVisible(false);
       } else {
         console.log('条件に一致するデータはありません。');
       }
@@ -175,11 +183,39 @@ export default function DetailDate({ route }) {
       const docRef = await addDoc(deleteRequestsCollection, {
         documentId:  openedPostData.docId
       });
+
+      setShowDeleteModal(false);
   
       console.log('削除依頼が送信されました。', docRef.id);
     } catch (error) {
       console.error('削除依頼の送信中にエラーが発生しました。', error);
     }
+  };
+  const handleImagePress = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setShowImageModal(true);
+    console.log(imageUrl)
+  };
+
+   //写真を選択する
+   const handleChoosePhoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setPhoto(result.uri);
+      setPhotoSelected(true);
+      setVisible(false)
+    }
+  };
+
+  const handleCancelPhoto = () => {
+    setPhoto(null);
+    setPhotoSelected(false);
   };
   
   
@@ -190,39 +226,74 @@ export default function DetailDate({ route }) {
     // fetchMarkers();
   }, []);
 
+  React.useEffect(() => {
+    (async () => {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      setCameraPermission(status === 'granted');
+    })();
+  }, []);
+
   return (
-    <Provider>
+    <Provider theme={theme}>
       <View style={styles.container}>
         <Modal isVisible={visible} onBackdropPress={hideModal} style={styles.modal}>
           <View style={containerStyle}>
+            <View style={{ flexDirection: 'row', alignItems: 'left',marginBottom: 10,width:'100%'}}>
             <TextInput
-              style={{width:'50%',height:'10%' ,
+              style={{width:'65%',height:38 ,
               borderWidth: 1,
               borderColor: '#2E8B57',
               // borderRadius: 5,
-              marginBottom: 10,
               backgroundColor: "#EFFBF5",
-              marginRight:'50%'}}
+              marginRight:'5%'}}
               color="#2E8B57" // テキストの色を薄緑色に設定
               placeholder='名前'
               placeholderTextColor={'#808080'}
               value={name}
               onChangeText={text => setName(text)}
             />
+
+            <Button mode="contained" style={{height:42,borderRadius: 5,alignItems: 'center',backgroundColor: '#2E8B57'}} onPress={sendComment}>
+              送信
+            </Button>
+            </View>
+
             <TextInput
               style={styles.input}
               color="#2E8B57"
-              placeholder='コメントを入力する'
+              label={`コメント (${comment.length}/80文字)`}
               placeholderTextColor='#808080'
               editable
               multiline
               maxLength={80}
+              minHeight={180} 
+              maxHeight={180} 
               value={comment}
               onChangeText={text => setComment(text)}
             />
-            <Button mode="contained" style={styles.button} onPress={sendComment}>
-              コメントを投稿
-            </Button>
+
+            <Card style={styles.Card}>
+              {photo && (
+                <Image source={{ uri: photo }} style={styles.photo} />
+              )}
+              {!photo && !photoSelected && (
+                <View style={styles.cameraContainer}>
+                  <IconButton
+                    icon="camera"
+                    size={30}
+                    onPress={handleChoosePhoto}
+                    style={styles.cameraButton}
+                    disabled={!cameraPermission}
+                  />
+                </View>
+              )}
+              {photoSelected && (
+                <Button mode="outlined" onPress={handleCancelPhoto}style={{marginTop:10}}>
+                  選択を解除
+                </Button>
+              )}
+            </Card>
+
           </View>
         </Modal>
 
@@ -233,9 +304,16 @@ export default function DetailDate({ route }) {
             不適切なコンテンツが含まれている場合に投稿の削除を運営に依頼することができます。</Text>
             <Text style={{marginBottom:15,color: 'gray',fontSize:15}}>このスポットの削除を依頼しますか？</Text>
             <Button onPress={sendRequest}>はい</Button>
-            <Button>いいえ</Button>
+            <Button onPress={()=>setShowDeleteModal(false)}>いいえ</Button>
           </View>
         </Modal>
+
+       <Modal isVisible={showImageModal} onBackdropPress={() => setShowImageModal(false)} style={styles.imageModal}>
+        <View style={styles.imageModalContainer}>
+          <Image source={{ uri: selectedImage }} style={styles.image} />
+        </View>
+      </Modal>
+
 
 
         {dataLoaded ? ( // データが読み込まれた後にUIを表示
@@ -286,6 +364,16 @@ export default function DetailDate({ route }) {
                   <Text style={{marginLeft:7,marginTop:7,color:'gray'}}>{comment.timestamp}</Text> 
                 </View>
                  <Text style={{marginLeft:7,marginTop:3,marginBottom:7,fontSize:17}}>{comment.comment}</Text>
+                 {comment.photo && ( // 写真が存在する場合のみ表示
+                      <View>
+                      {/* <Card.Cover onPress={() => handleImagePress(comment.photo)}>
+                       <Image source={{ uri: comment.photo }} style={styles.image2} />
+                      </Card.Cover> */}
+                      <TouchableOpacity onPress={() => handleImagePress(comment.photo)}>
+                        <Image source={{ uri: comment.photo }} style={styles.image2} />
+                      </TouchableOpacity>
+                    </View>
+                  )}
               <Divider/>
               </View>
           ))}
@@ -310,11 +398,19 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
   },
+
   image: {
     width: 300,
     height: 300,
     resizeMode: 'cover',
     margin: 10,
+  },
+  image2: {
+    width: 80,
+    height: 80,
+    resizeMode: 'cover',
+    marginTop:0,
+    margin:10
   },
   row: {
     flexDirection: 'row',
@@ -366,7 +462,7 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     // marginBottom: 20,
-    padding: 10,
+    padding: 0,
     // backgroundColor: '2E8B57',
     borderWidth: 1,
     borderColor: '#2E8B57',
@@ -387,6 +483,29 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     margin:7,
     fontSize:16
+  },
+  photo: {
+    width: 100,
+    height: 100,
+    marginTop:16,
+    marginBottom: 16,
+    alignSelf: 'center',
+  },
+  Card:{
+    marginTop:10,
+    marginBottom:50,
+    maxHeight:130,
+    minHeight:30
+  },
+  imageModal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageModalContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 });
 

@@ -156,7 +156,9 @@ export default function Input() {
             onChangeText={handleMessageChange}
             style={styles.input}
             multiline
-            numberOfLines={10}
+            maxLength={600}
+            minHeight={250}
+            maxHeight={250}  
             color="#2E8B57" // テキストの色を薄緑色に設定
           />
           <Text style={styles.errorText}>
