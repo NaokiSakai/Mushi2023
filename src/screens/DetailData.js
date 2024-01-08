@@ -1,11 +1,13 @@
 import React, { useState,useEffect } from 'react';
-import { StyleSheet, View, Linking, ScrollView,Image,TouchableOpacity } from 'react-native';
+import PropTypes from 'deprecated-react-native-prop-types';
+import { StyleSheet, View, Linking, ScrollView,Image,TouchableOpacity,Dimensions,Keyboard,TouchableWithoutFeedback} from 'react-native';
 import { Avatar, Card, Paragraph, Text, Button, IconButton, DefaultTheme, Provider, TextInput, MD3Colors,Divider} from 'react-native-paper';
 import Modal from "react-native-modal";
 import { format, setSeconds } from 'date-fns';
 import { getFirestore, collection, getDocs, where,query,limit, QuerySnapshot,addDoc,updateDoc} from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import * as ImagePicker from 'expo-image-picker';
+import Carousel, { Pagination } from 'react-native-snap-carousel'; 
 
 const firebaseConfig = {
   // Firebaseの設定情報
@@ -27,19 +29,19 @@ export default function DetailDate({ route }) {
   const hideModal = () => setVisible(false);
   const showModal = () => setVisible(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const [name, setName] = useState("");
   const [comment, setComment] = useState("");
   const [data, setData] = useState({});
   const [dataLoaded, setDataLoaded] = useState(false);
   const [visibleComment,setVisibleComment] =useState([]);
   const [openedPostData, setOpenedPostData] = useState(null);
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState([]);
   const [cameraPermission, setCameraPermission] = useState(null);
   const [photoSelected, setPhotoSelected] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
-const [selectedImage, setSelectedImage] = useState(null);
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const maxSelections = 3 - photo.length;
   const containerStyle = {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     padding: 20,
@@ -191,6 +193,7 @@ const [selectedImage, setSelectedImage] = useState(null);
       console.error('削除依頼の送信中にエラーが発生しました。', error);
     }
   };
+  
   const handleImagePress = (imageUrl) => {
     setSelectedImage(imageUrl);
     setShowImageModal(true);
@@ -198,29 +201,38 @@ const [selectedImage, setSelectedImage] = useState(null);
   };
 
    //写真を選択する
-   const handleChoosePhoto = async () => {
+  const handleChoosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
+      allowsEditing: false,//falseにしました
+      allowsMultipleSelection: true,
+      selectionLimit: maxSelections, 
     });
-
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      setPhotoSelected(true);
-      setVisible(false)
+    console.log(result);
+    if (!result.canceled) {
+      const selectedPhoto = result.assets.map(asset => asset.uri); // 選択した写真のURIを配列に変換
+      setPhoto([...photo, ...selectedPhoto]); // 選択した写真を配列に一括追加
+      setVisible(true);
     }
   };
 
-  const handleCancelPhoto = () => {
-    setPhoto(null);
-    setPhotoSelected(false);
+  const handleRemovePhoto = (index) => {
+    const updatedPhoto = [...photo];
+    updatedPhoto.splice(index, 1);
+    setPhoto(updatedPhoto);
   };
-  
-  
 
-    useEffect(() => {
+  const _renderCarouselItem = ({ item }) => (
+    <Card.Cover
+      source={{ uri: item }}
+      style={styles.image}
+      resizeMode="contain"
+      onPress={() => handleImagePress(item)} // Add an onPress handler for image modal
+    />
+  );
+  
+  
+  useEffect(() => {
     getAllData();
     getComment();
     // fetchMarkers();
@@ -236,26 +248,26 @@ const [selectedImage, setSelectedImage] = useState(null);
   return (
     <Provider theme={theme}>
       <View style={styles.container}>
-        <Modal isVisible={visible} onBackdropPress={hideModal} style={styles.modal}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Modal isVisible={visible} onBackdropPress={hideModal} style={styles.modal} >
           <View style={containerStyle}>
             <View style={{ flexDirection: 'row', alignItems: 'left',marginBottom: 10,width:'100%'}}>
-            <TextInput
-              style={{width:'65%',height:38 ,
-              borderWidth: 1,
-              borderColor: '#2E8B57',
-              // borderRadius: 5,
-              backgroundColor: "#EFFBF5",
-              marginRight:'5%'}}
-              color="#2E8B57" // テキストの色を薄緑色に設定
-              placeholder='名前'
-              placeholderTextColor={'#808080'}
-              value={name}
-              onChangeText={text => setName(text)}
-            />
+              <TextInput
+                style={{width:'65%',height:38 ,
+                borderWidth: 1,
+                borderColor: '#2E8B57',
+                backgroundColor: "#EFFBF5",
+                marginRight:'5%'}}
+                color="#2E8B57" // テキストの色を薄緑色に設定
+                placeholder='名前'
+                placeholderTextColor={'#808080'}
+                value={name}
+                onChangeText={text => setName(text)}
+              />
 
-            <Button mode="contained" style={{height:42,borderRadius: 5,alignItems: 'center',backgroundColor: '#2E8B57'}} onPress={sendComment}>
-              送信
-            </Button>
+              <Button mode="contained" style={{height:42,borderRadius: 5,alignItems: 'center',backgroundColor: '#2E8B57'}} onPress={sendComment}>
+                送信
+              </Button>
             </View>
 
             <TextInput
@@ -272,14 +284,23 @@ const [selectedImage, setSelectedImage] = useState(null);
               onChangeText={text => setComment(text)}
             />
 
-            <Card style={styles.Card}>
-              {photo && (
-                <Image source={{ uri: photo }} style={styles.photo} />
-              )}
-              {!photo && !photoSelected && (
+          <Card style={styles.Card}>
+            <View style={styles.horizontalImageContainer}>
+              {photo.map((photoUri, index) => (
+              <View style={styles.photoContainer}>
+              <Image source={{ uri: photoUri }} style={styles.photo} />
+              <IconButton
+                icon="close"
+                size={10}
+                style={styles.closeButton}
+                onPress={() => handleRemovePhoto(index)}
+              />
+            </View>
+            ))}
+             {photo.length < 3 && (
                 <View style={styles.cameraContainer}>
                   <IconButton
-                    icon="camera"
+                    icon="camera-plus"
                     size={30}
                     onPress={handleChoosePhoto}
                     style={styles.cameraButton}
@@ -287,15 +308,11 @@ const [selectedImage, setSelectedImage] = useState(null);
                   />
                 </View>
               )}
-              {photoSelected && (
-                <Button mode="outlined" onPress={handleCancelPhoto}style={{marginTop:10}}>
-                  選択を解除
-                </Button>
-              )}
-            </Card>
-
+            </View>      
+          </Card>
           </View>
         </Modal>
+      </TouchableWithoutFeedback>
 
         <Modal isVisible={showDeleteModal} onBackdropPress={() => setShowDeleteModal(false)} style={styles.deleteModal}>
           <View style={containerStyle2}>
@@ -308,7 +325,7 @@ const [selectedImage, setSelectedImage] = useState(null);
           </View>
         </Modal>
 
-       <Modal isVisible={showImageModal} onBackdropPress={() => setShowImageModal(false)} style={styles.imageModal}>
+      <Modal isVisible={showImageModal} onBackdropPress={() => setShowImageModal(false)} style={styles.imageModal}>
         <View style={styles.imageModalContainer}>
           <Image source={{ uri: selectedImage }} style={styles.image} />
         </View>
@@ -320,7 +337,19 @@ const [selectedImage, setSelectedImage] = useState(null);
           <ScrollView keyboardShouldPersistTaps="handled">
             <Card style={{ backgroundColor: '#EFFBF5' }}>
               <View style={styles.imageContainer}>
-                <Card.Cover source={{ uri: data.photo }} style={styles.image} />
+              <Carousel
+                data={data.photo}
+                renderItem={_renderCarouselItem}
+                sliderWidth={Dimensions.get("window").width}
+                itemWidth={Dimensions.get("window").width}
+                onSnapToItem={(index) => setActiveSlide(index)}
+              />
+
+              <Pagination
+                dotsLength={data.photo.length}
+                activeDotIndex={activeSlide}
+                containerStyle={{ paddingVertical: 15 }}
+              />
               </View>
               <Card.Content>
                 <View style={styles.row}>
@@ -364,19 +393,18 @@ const [selectedImage, setSelectedImage] = useState(null);
                   <Text style={{marginLeft:7,marginTop:7,color:'gray'}}>{comment.timestamp}</Text> 
                 </View>
                  <Text style={{marginLeft:7,marginTop:3,marginBottom:7,fontSize:17}}>{comment.comment}</Text>
-                 {comment.photo && ( // 写真が存在する場合のみ表示
-                      <View>
-                      {/* <Card.Cover onPress={() => handleImagePress(comment.photo)}>
-                       <Image source={{ uri: comment.photo }} style={styles.image2} />
-                      </Card.Cover> */}
-                      <TouchableOpacity onPress={() => handleImagePress(comment.photo)}>
-                        <Image source={{ uri: comment.photo }} style={styles.image2} />
+                 <View style ={{flexDirection: "row"}}>
+                 {comment.photo.map((photoUri, index) => ( // 写真が存在する場合のみ表示
+                    <View>
+                      <TouchableOpacity onPress={() => handleImagePress(photoUri)}>
+                        <Image source={{ uri: photoUri }} style={styles.image2} />
                       </TouchableOpacity>
                     </View>
-                  )}
+                  ))}
+                  </View>
               <Divider/>
               </View>
-          ))}
+            ))}
             </Card>
           </ScrollView>
         ) : (
@@ -400,11 +428,12 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 300,
     height: 300,
-    resizeMode: 'cover',
     margin: 10,
+    marginLeft:35,
+    marginRight:35
   },
+
   image2: {
     width: 80,
     height: 80,
@@ -485,28 +514,46 @@ const styles = StyleSheet.create({
     fontSize:16
   },
   photo: {
-    width: 100,
-    height: 100,
-    marginTop:16,
-    marginBottom: 16,
+    width: 70,
+    height: 70,
+    margin:10,
     alignSelf: 'center',
   },
   Card:{
     marginTop:10,
     marginBottom:50,
     maxHeight:130,
+    maxWidth:280,
     minHeight:30
   },
   imageModal: {
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   imageModalContainer: {
     backgroundColor: 'white',
     borderRadius: 10,
-    alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
+  horizontalImageContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 12,
+    zIndex: 1,
+  },
+  cameraContainer: {
+    alignItems: 'center',
+    marginBottom: 0,
+    marginTop:0
+  },
 });
 
 const theme = {

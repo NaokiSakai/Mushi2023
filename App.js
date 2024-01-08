@@ -1,77 +1,64 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-// import Header from './src/components/Headers'
-import HeaderBack from './src/components/HeaderBack';
-import Footer from './src/components/Footer'
-import MainMapPage from './src/screens/MainMapPage'
-import PinMapPage from './src/screens/PinMapPage'
-import DateRegister from './src/screens/DateRegister'
-// import ContactForm from './src/screens/ContactForm'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+//以下画面要素
 import MapScreen from './src/components/Map';
-import ContactForm from './src/screens/ContactForm';
-import { initializeApp } from 'firebase/app'; // Firebase v9から追加されたモジュール
-import { getDatabase } from 'firebase/database'; // 必要に応じて他のFirebaseサービスを追加でインポート
-import DetailData from './src/screens/DetailData';
-require('firebase/firestore');
-
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk',
-  authDomain: 'mushimapworld.firebaseapp.com',
-  databaseURL: 'https://mushimapworld-default-rtdb.firebaseio.com',
-  projectId: 'mushimapworld',
-  storageBucket: 'mushimapworld.appspot.com',
-  messagingSenderId: '717364972455',
-  appId: '1:717364972455:web:f8e0c51b6758c2432ec482',
-  measurementId: 'G-NGJBM2G1RB'
-};
-
-const firebaseApp = initializeApp(firebaseConfig); // Firebaseアプリの初期化
+import お問合せ from './src/screens/ContactForm';
+import メインマップ from './src/screens/MainMapPage'
+import ピン配置マップ from './src/screens/PinMapPage'
+import 昆虫登録 from './src/screens/DateRegister'
+import スポット情報 from './src/screens/DetailData';
+import 利用規約 from './src/screens/TermsPage'
+import 使い方ガイド from './src/screens/GuidePage';
 
 const Stack = createStackNavigator();
-
 export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaProvider>
         <Stack.Navigator>
           <Stack.Screen
-            name="MainMapPage"
-            component={MainMapPage}
-            // options={{ header: () => <Header title="Main Map Page" /> }}
+            name="メインマップ"
+            component={メインマップ}
             options={{ headerShown: false }} 
           />
           <Stack.Screen
-            name="PinMapPage"
-            component={PinMapPage}
-            // options={{ header: () => <HeaderBack title="Pin Map Page" /> }}
+            name="ピン配置マップ"
+            component={ピン配置マップ}
             options={{ headerShown: false }} 
           />
           <Stack.Screen
-            name="DateRegister"
-            component={DateRegister}
+            name="昆虫登録"
+            component={昆虫登録}
             options={{ headerTitle: '昆虫登録ページ' }}
           />
           <Stack.Screen
             name="MapScreen"
             component={MapScreen}
-            // options={{ header: () => <Header title="Map Screen" latitude={latitude} longitude={longitude} /> }}
             options={{ headerShown: false }} 
           />
            <Stack.Screen
-            name="ContactForm"
-            component={ContactForm}
+            name="お問合せ"
+            component={お問合せ}
             options={{  headerTitle: 'お問合せ' }}
           />
            <Stack.Screen
-            name="DetailData"
-            component={DetailData}
+            name="スポット情報"
+            component={スポット情報}
             options={{  headerTitle: 'スポット情報' }}
           />
+           <Stack.Screen
+            name="利用規約"
+            component={利用規約}
+            options={{  headerTitle: '利用規約' }}
+          />
+           <Stack.Screen
+            name="使い方ガイド"
+            component={使い方ガイド}
+            options={{  headerTitle: '使い方ガイド' }}
+          />
         </Stack.Navigator>
-        {/* <Footer /> */}
       </SafeAreaProvider>
     </NavigationContainer>
   );

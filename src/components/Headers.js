@@ -4,11 +4,10 @@ import OpenCageGeocoder from 'opencage-api-client';
 import { View } from 'react-native';
 
 export default function Headers({ navigation, back, setLatitude, setLongitude,setInsectName}) {
-  const [visible, setVisible] = useState(false);
   const [text, setText] = useState('');
   const [additionalInputVisible, setAdditionalInputVisible] = useState(false);
   const [additionalInputText, setAdditionalInputText] = useState('');
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [isArrowUpIcon, setIsArrowUpIcon] = useState(false); 
   const theme = {
     ...DefaultTheme,
     colors: {
@@ -40,22 +39,11 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
     }
   };
 
-  const handleDropdownOpen = () => {
-    setVisible(true);
-  };
-
-  const handleDropdownClose = () => {
-    setVisible(false);
-  };
-
-  const handleDropdownSelect = (item) => {
-    setSelectedItem(item);
-    handleDropdownClose();
-  };
 
   const handleAdditionalInputToggle = () => {
     setAdditionalInputVisible(!additionalInputVisible);
     setAdditionalInputText('');
+    setIsArrowUpIcon(!isArrowUpIcon); 
   };
 
   const handleAdditionalInputChange = (text) => {
@@ -67,7 +55,7 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
       <View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Appbar.Action
-          icon="arrow-down-drop-circle-outline"
+          icon={isArrowUpIcon ? "arrow-up-drop-circle-outline" : "arrow-down-drop-circle-outline"}
           onPress={handleAdditionalInputToggle}
           style={{ width: 20, height: 25, marginLeft: 10 }}
         />
@@ -76,35 +64,16 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
           mode="outlined"
           value={text}
           onChangeText={(text) => setText(text)}
-          style={{ width: 260, marginLeft: '3%', }}
+          style={{ width: 270, marginLeft: '3%', }}
           theme={theme}
         />
 
         <Appbar.Action
           icon="magnify"
           onPress={handleSearch}
-          style={{ width: 20, height: 20, marginLeft: 10 }}
+          style={{ width: 40, height: 40,marginLeft: 10, marginTop:10 ,backgroundColor:'#b5d4bf'}}
         />
-        <Menu
-          visible={visible}
-          onDismiss={handleDropdownClose}
-          anchor={
-            <Appbar.Action
-              icon="dots-vertical"
-              onPress={handleDropdownOpen}
-              style={{ width: 20, height: 20 }}
-            />
-          }
-        >
-          <Menu.Item onPress={() => navigation.navigate('Page2')} title="利用規約" />
-          <Menu.Item
-            onPress={() => {
-              console.log('オプション2が押されました');
-            }}
-            title="アプリ使用方法"
-            />
-            <Menu.Item onPress={handleDropdownClose} title="戻る" />
-        </Menu>
+
         </View>
 
             <View>
@@ -115,7 +84,7 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
                       mode="outlined"
                       value={additionalInputText}
                       onChangeText={handleAdditionalInputChange}
-                      style={{ width: 260, marginLeft: '13%',}}
+                      style={{ width: 270, marginLeft: '13%',}}
                       theme={theme}
                     />
                   </View>

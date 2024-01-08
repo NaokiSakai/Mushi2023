@@ -13,7 +13,7 @@ import { Marker } from 'react-native-maps';
 import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, where,query,limit,} from 'firebase/firestore';
+import { getFirestore, collection, getDocs, where, query, limit} from 'firebase/firestore';
 import { select } from 'firebase/firestore';
 import Headers from './Headers';
 import { Provider } from 'react-native-paper';
@@ -42,12 +42,14 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 export default function MapScreen() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [message, setMeMssage] = useState('位置情報取得中');
+  const [message, setMessage] = useState('位置情報取得中');
   const [markers, setMarkers] = useState([]);
   const [insectName, setInsectName] = useState('');
   const [visibleMarkers, setVisibleMarkers] = useState([]);
   const navigation = useNavigation();
   const [showMessage, setShowMessage] = useState(false);
+  const [lastQueryTime, setLastQueryTime] = useState(0);
+  const [excludeDataIds,setExcludeDataIds] = useState([]);
 
   //現在値を取得移動
   const getLocationAsync = async () => {
@@ -64,6 +66,10 @@ export default function MapScreen() {
 
 //マップの可視範囲が変更された時に実行される関数
 const handleRegionChange = async (region) => {
+  const currentTime = Date.now();
+  if (currentTime - lastQueryTime > 2000) {
+    setLastQueryTime(currentTime);
+
   const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
 
   
@@ -74,7 +80,7 @@ const handleRegionChange = async (region) => {
       registerCollection,
       where('markers.latlng.latitude', '>=', latitude - latitudeDelta / 2),
       where('markers.latlng.latitude', '<=', latitude + latitudeDelta / 2),
-      limit(20),
+      limit(40),
     ),
   );
 
@@ -93,11 +99,6 @@ const handleRegionChange = async (region) => {
         const markerData = {
           latlng: markersData,
           name: nameData,
-          // location: data.location,
-          // time: data.time,
-          // address: data.address,
-          // memo: data.memo,
-          // photo: data.photo,
         };
         visibleMarkersData.push(markerData);
         if(visibleMarkersData.length>30){
@@ -132,6 +133,7 @@ const handleRegionChange = async (region) => {
     });
     setVisibleMarkers(visibleMarkersData);
     // setShowMessage(false);
+  }
 };
 
   useEffect(() => {
@@ -197,7 +199,7 @@ const handleRegionChange = async (region) => {
             <Marker
               key={index}
               coordinate={marker.latlng.latlng}
-              onPress={() => navigation.navigate('DetailData', { marker: marker })}
+              onPress={() => navigation.navigate('スポット情報', { marker: marker })}
             >
               <Image
                 source={require('../../assets/beetle_1742.png')}

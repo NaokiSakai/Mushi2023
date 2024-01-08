@@ -40,15 +40,24 @@ export default function HeaderBack({setLatitude, setLongitude}) {
   return (
     <Provider>
       <Appbar.Header>
-      <Appbar.BackAction onPress={() => navigation.navigate('MainMapPage')} />
-        <TextInput
-        label='検索するスポットを入力' 
-        mode='outlined' 
-        theme={theme}
-        value={text} 
-        onChangeText={text => setText(text)}
-        style={{width:"70%",marginLeft:"3%",marginBottom:"1.5%"}}/>
-        <Appbar.Action icon="magnify" onPress={_handleSearch} /> 
+      <Appbar.BackAction
+       onPress={() => navigation.navigate('メインマップ')} 
+        style={{ width: 20, height: 25, marginLeft: 10 }}
+      />
+      <TextInput
+          label="検索するスポットを入力"
+          mode="outlined"
+          value={text}
+          onChangeText={(text) => setText(text)}
+          style={{ width: 270, marginLeft: '3%', }}
+          theme={theme}
+        />
+
+        <Appbar.Action
+          icon="magnify"
+          onPress={_handleSearch}
+          style={{ width: 40, height: 40,marginLeft: 10, marginTop:10 ,backgroundColor:'#b5d4bf'}}
+        />
       </Appbar.Header>
     </Provider>
   );

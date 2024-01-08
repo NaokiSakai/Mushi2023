@@ -32,8 +32,8 @@ export default function Footer({ onGetLocation, onFetchMarkers }) {
     >
       <Appbar.Action style={[styles.icon]} icon="autorenew" onPress={handleFetchMarkers}/>
       <Appbar.Action style={[styles.icon]} icon="map-marker-radius" onPress={handleGetLocation} />
-      <Appbar.Action style={[styles.icon]} icon="plus-circle-outline" onPress={() => navigation.navigate('PinMapPage')} />
-      <Appbar.Action style={[styles.icon]} icon="email-outline" onPress={() => navigation.navigate('ContactForm')} />
+      <Appbar.Action style={[styles.icon]} icon="plus-circle-outline" onPress={() => navigation.navigate('ピン配置マップ')} />
+      <Appbar.Action style={[styles.icon]} icon="email-outline" onPress={() => navigation.navigate('お問合せ')} />
     </Appbar>
   );
 }

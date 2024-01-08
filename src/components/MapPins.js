@@ -65,7 +65,7 @@ const MapPin = () => {
           };
           setMarkers(newMarkers);
           //ページ遷移先にタップした経度緯度のデータを渡す
-          navigation.navigate('DateRegister', { markers: newMarkers });
+          navigation.navigate('昆虫登録', { markers: newMarkers });
         } else {
           console.log('住所情報が見つかりませんでした。');
         }
