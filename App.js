@@ -3,12 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 //以下画面要素
-import MapScreen from './src/components/Map';
 import お問合せ from './src/screens/ContactForm';
 import メインマップ from './src/screens/MainMapPage'
 import ピン配置マップ from './src/screens/PinMapPage'
-import 昆虫登録 from './src/screens/DateRegister'
-import スポット情報 from './src/screens/DetailData';
+import 昆虫登録 from './src/screens/DataRegisterPage'
+import スポット情報 from './src/screens/DetailDataPage';
 import 利用規約 from './src/screens/TermsPage'
 import 使い方ガイド from './src/screens/GuidePage';
 
@@ -32,11 +31,6 @@ export default function App() {
             name="昆虫登録"
             component={昆虫登録}
             options={{ headerTitle: '昆虫登録ページ' }}
-          />
-          <Stack.Screen
-            name="MapScreen"
-            component={MapScreen}
-            options={{ headerShown: false }} 
           />
            <Stack.Screen
             name="お問合せ"

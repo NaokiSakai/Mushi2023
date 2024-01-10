@@ -3,11 +3,13 @@ import { Appbar, TextInput, Menu, DefaultTheme } from 'react-native-paper';
 import OpenCageGeocoder from 'opencage-api-client';
 import { View } from 'react-native';
 
-export default function Headers({ navigation, back, setLatitude, setLongitude,setInsectName}) {
+const geoKey = require('../../config/default.json').geoKey;
+
+export default function Headers({setLatitude, setLongitude, setInsectName }) {
   const [text, setText] = useState('');
   const [additionalInputVisible, setAdditionalInputVisible] = useState(false);
   const [additionalInputText, setAdditionalInputText] = useState('');
-  const [isArrowUpIcon, setIsArrowUpIcon] = useState(false); 
+  const [isArrowUpIcon, setIsArrowUpIcon] = useState(false);
   const theme = {
     ...DefaultTheme,
     colors: {
@@ -22,7 +24,7 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
       setInsectName(additionalInputText);
       const response = await OpenCageGeocoder.geocode({
         q: text,
-        key: '2c4078063de045b8a9dae534fa87b241',
+        key: geoKey,
       });
 
       if (response.status.code === 200) {
@@ -43,7 +45,7 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
   const handleAdditionalInputToggle = () => {
     setAdditionalInputVisible(!additionalInputVisible);
     setAdditionalInputText('');
-    setIsArrowUpIcon(!isArrowUpIcon); 
+    setIsArrowUpIcon(!isArrowUpIcon);
   };
 
   const handleAdditionalInputChange = (text) => {
@@ -53,45 +55,44 @@ export default function Headers({ navigation, back, setLatitude, setLongitude,se
   return (
     <Appbar.Header style={{ height: additionalInputVisible ? 125 : 70 }}>
       <View>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Appbar.Action
-          icon={isArrowUpIcon ? "arrow-up-drop-circle-outline" : "arrow-down-drop-circle-outline"}
-          onPress={handleAdditionalInputToggle}
-          style={{ width: 20, height: 25, marginLeft: 10 }}
-        />
-        <TextInput
-          label="検索するスポットを入力"
-          mode="outlined"
-          value={text}
-          onChangeText={(text) => setText(text)}
-          style={{ width: 270, marginLeft: '3%', }}
-          theme={theme}
-        />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Appbar.Action
+            icon={isArrowUpIcon ? "arrow-up-drop-circle-outline" : "arrow-down-drop-circle-outline"}
+            onPress={handleAdditionalInputToggle}
+            style={{ width: 20, height: 25, marginLeft: 10 }}
+          />
+          <TextInput
+            label="検索するスポットを入力"
+            mode="outlined"
+            value={text}
+            onChangeText={(text) => setText(text)}
+            style={{ width: 270, marginLeft: '3%', }}
+            theme={theme}
+          />
 
-        <Appbar.Action
-          icon="magnify"
-          onPress={handleSearch}
-          style={{ width: 40, height: 40,marginLeft: 10, marginTop:10 ,backgroundColor:'#b5d4bf'}}
-        />
+          <Appbar.Action
+            icon="magnify"
+            onPress={handleSearch}
+            style={{ width: 40, height: 40, marginLeft: 10, marginTop: 10, backgroundColor: '#b5d4bf' }}
+          />
 
         </View>
 
-            <View>
-              {additionalInputVisible && (
-                  <View style={{flexDirection: 'row' ,alignItems:'center'}}>
-                    <TextInput
-                      label="検索する昆虫を入力"
-                      mode="outlined"
-                      value={additionalInputText}
-                      onChangeText={handleAdditionalInputChange}
-                      style={{ width: 270, marginLeft: '13%',}}
-                      theme={theme}
-                    />
-                  </View>
-                )}
+        <View>
+          {additionalInputVisible && (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TextInput
+                label="検索する昆虫を入力"
+                mode="outlined"
+                value={additionalInputText}
+                onChangeText={handleAdditionalInputChange}
+                style={{ width: 270, marginLeft: '13%', }}
+                theme={theme}
+              />
             </View>
+          )}
+        </View>
       </View>
     </Appbar.Header>
-      );
-    }
-    
+  );
+}

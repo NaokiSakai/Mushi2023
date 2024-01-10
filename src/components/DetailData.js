@@ -1,30 +1,18 @@
-import React, { useState,useEffect } from 'react';
-import PropTypes from 'deprecated-react-native-prop-types';
-import { StyleSheet, View, Linking, ScrollView,Image,TouchableOpacity,Dimensions,Keyboard,TouchableWithoutFeedback} from 'react-native';
-import { Avatar, Card, Paragraph, Text, Button, IconButton, DefaultTheme, Provider, TextInput, MD3Colors,Divider} from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Linking, ScrollView, Image, TouchableOpacity, Dimensions, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Avatar, Card, Paragraph, Text, Button, IconButton, DefaultTheme, Provider, TextInput, MD3Colors, Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import { format, setSeconds } from 'date-fns';
-import { getFirestore, collection, getDocs, where,query,limit, QuerySnapshot,addDoc,updateDoc} from 'firebase/firestore';
+import { getFirestore, collection, getDocs, where, query, limit, QuerySnapshot, addDoc, updateDoc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import * as ImagePicker from 'expo-image-picker';
-import Carousel, { Pagination } from 'react-native-snap-carousel'; 
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 
-const firebaseConfig = {
-  // Firebaseの設定情報
-    apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
-    authDomain: "mushimapworld.firebaseapp.com",
-    databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
-    projectId: "mushimapworld",
-    storageBucket: "mushimapworld.appspot.com",
-    messagingSenderId: "717364972455",
-    appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
-    measurementId: "G-NGJBM2G1RB"
-};
-
+const firebaseConfig = require('../../config/default.json').firebaseConfig;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export default function DetailDate({ route }) {
+export default function DetailData({ route }) {
   const [visible, setVisible] = useState(false);
   const hideModal = () => setVisible(false);
   const showModal = () => setVisible(true);
@@ -33,7 +21,7 @@ export default function DetailDate({ route }) {
   const [comment, setComment] = useState("");
   const [data, setData] = useState({});
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [visibleComment,setVisibleComment] =useState([]);
+  const [visibleComment, setVisibleComment] = useState([]);
   const [openedPostData, setOpenedPostData] = useState(null);
   const [photo, setPhoto] = useState([]);
   const [cameraPermission, setCameraPermission] = useState(null);
@@ -41,13 +29,13 @@ export default function DetailDate({ route }) {
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
+
   const maxSelections = 3 - photo.length;
   const containerStyle = {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
-    //justifyContent: 'center',
     width: '90%',
     maxHeight: '60%', // 最大の高さ
     minHeight: '38%', // 最小の高さ
@@ -68,39 +56,39 @@ export default function DetailDate({ route }) {
   const { marker } = route.params;
 
   const getAllData = async () => {
-  const registerCollection = collection(db, 'Register');
-  const querySnapshot = await getDocs(
-    query(
-      registerCollection,
-      where('markers.location', '==', marker.latlng.location  ),
-      where('name', '==', marker.name),
-    ),
-  );
+    const registerCollection = collection(db, 'Register');
+    const querySnapshot = await getDocs(
+      query(
+        registerCollection,
+        where('markers.location', '==', marker.latlng.location),
+        where('name', '==', marker.name),
+      ),
+    );
 
-  if (querySnapshot.empty) {
-    console.log("条件に一致するデータはありません。");
-  }else{
-    querySnapshot.forEach((doc) =>{
-      const allData = doc.data()
-      const formattedTime = formatTimestamp(allData.time);
-      const markerData = {
-        name: allData.name,
-        location: allData.location,
-        time: formattedTime,
-        address: allData.address,
-        memo: allData.memo,
-        photo: allData.photo,
-      };
-      setData(markerData);
-      setDataLoaded(true);
+    if (querySnapshot.empty) {
+      console.log("条件に一致するデータはありません。");
+    } else {
+      querySnapshot.forEach((doc) => {
+        const allData = doc.data()
+        const formattedTime = formatTimestamp(allData.time);
+        const markerData = {
+          name: allData.name,
+          location: allData.location,
+          time: formattedTime,
+          address: allData.address,
+          memo: allData.memo,
+          photo: allData.photo,
+        };
+        setData(markerData);
+        setDataLoaded(true);
+        setOpenedPostData({
+          docId: doc.id, // ドキュメントのIDを保存
+        });
+        console.log(data);
+      })
+    }
+  }
 
-      setOpenedPostData({
-        docId: doc.id, // ドキュメントのIDを保存
-      });
-      console.log(data);
-    })
-  }
-  }
   const formatTimestamp = (timestamp) => {
     const dateObject = timestamp.toDate();
     const formattedTime = format(setSeconds(dateObject, 0), 'yyyy/MM/dd HH:mm');
@@ -123,12 +111,12 @@ export default function DetailDate({ route }) {
           where('name', '==', marker.name),
         ),
       );
-  
+
       if (!querySnapshot.empty) {
         // 既存のドキュメントがある場合は、最初のドキュメントを取得してコメントを追加
         const docData = querySnapshot.docs[0].data();
         // commentsフィールドが既に存在する場合は、既存の配列にコメントを追加
-        const updatedComments =  [...docData.comments];
+        const updatedComments = [...docData.comments];
         setVisibleComment(updatedComments);
         console.log('コメントが取得されました。');
       } else {
@@ -149,17 +137,17 @@ export default function DetailDate({ route }) {
           where('name', '==', marker.name),
         ),
       );
-  
+
       if (!querySnapshot.empty) {
         // 既存のドキュメントがある場合は、最初のドキュメントを取得してコメントを追加
         const docRef = querySnapshot.docs[0].ref;
         const docData = querySnapshot.docs[0].data();
-  
+
         // commentsフィールドが既に存在する場合は、既存の配列にコメントを追加
-        const timestamp =new Date().toLocaleString();
+        const timestamp = new Date().toLocaleString();
         console.log(timestamp);
-        const updatedComments = docData.comments ? [...docData.comments, { name, comment, timestamp,photo}] : [{ name, comment,timestamp,photo }];
-  
+        const updatedComments = docData.comments ? [...docData.comments, { name, comment, timestamp, photo }] : [{ name, comment, timestamp, photo }];
+
         // ドキュメントの更新
         await updateDoc(docRef, { comments: updatedComments });
         setVisibleComment(updatedComments);
@@ -180,33 +168,33 @@ export default function DetailDate({ route }) {
     try {
       // DeleteRequestsという新しいコレクションに送信する
       const deleteRequestsCollection = collection(db, 'DeleteRequests');
-      
+
       // ドキュメントIDと関連データを送信する
       const docRef = await addDoc(deleteRequestsCollection, {
-        documentId:  openedPostData.docId
+        documentId: openedPostData.docId
       });
 
       setShowDeleteModal(false);
-  
+
       console.log('削除依頼が送信されました。', docRef.id);
     } catch (error) {
       console.error('削除依頼の送信中にエラーが発生しました。', error);
     }
   };
-  
+
   const handleImagePress = (imageUrl) => {
     setSelectedImage(imageUrl);
     setShowImageModal(true);
     console.log(imageUrl)
   };
 
-   //写真を選択する
+  //写真を選択する
   const handleChoosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,//falseにしました
       allowsMultipleSelection: true,
-      selectionLimit: maxSelections, 
+      selectionLimit: maxSelections,
     });
     console.log(result);
     if (!result.canceled) {
@@ -230,8 +218,7 @@ export default function DetailDate({ route }) {
       onPress={() => handleImagePress(item)} // Add an onPress handler for image modal
     />
   );
-  
-  
+
   useEffect(() => {
     getAllData();
     getComment();
@@ -248,88 +235,90 @@ export default function DetailDate({ route }) {
   return (
     <Provider theme={theme}>
       <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Modal isVisible={visible} onBackdropPress={hideModal} style={styles.modal} >
-          <View style={containerStyle}>
-            <View style={{ flexDirection: 'row', alignItems: 'left',marginBottom: 10,width:'100%'}}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <Modal isVisible={visible} onBackdropPress={hideModal} style={styles.modal} >
+            <View style={containerStyle}>
+              <View style={{ flexDirection: 'row', alignItems: 'left', marginBottom: 10, width: '100%' }}>
+                <TextInput
+                  style={{
+                    width: '65%', height: 38,
+                    borderWidth: 1,
+                    borderColor: '#2E8B57',
+                    backgroundColor: "#EFFBF5",
+                    marginRight: '5%'
+                  }}
+                  color="#2E8B57" // テキストの色を薄緑色に設定
+                  placeholder='名前'
+                  placeholderTextColor={'#808080'}
+                  value={name}
+                  onChangeText={text => setName(text)}
+                />
+
+                <Button mode="contained" style={{ height: 42, borderRadius: 5, alignItems: 'center', backgroundColor: '#2E8B57' }} onPress={sendComment}>
+                  送信
+                </Button>
+              </View>
+
               <TextInput
-                style={{width:'65%',height:38 ,
-                borderWidth: 1,
-                borderColor: '#2E8B57',
-                backgroundColor: "#EFFBF5",
-                marginRight:'5%'}}
-                color="#2E8B57" // テキストの色を薄緑色に設定
-                placeholder='名前'
-                placeholderTextColor={'#808080'}
-                value={name}
-                onChangeText={text => setName(text)}
+                style={styles.input}
+                color="#2E8B57"
+                label={`コメント (${comment.length}/80文字)`}
+                placeholderTextColor='#808080'
+                editable
+                multiline
+                maxLength={80}
+                minHeight={180}
+                maxHeight={180}
+                value={comment}
+                onChangeText={text => setComment(text)}
               />
 
-              <Button mode="contained" style={{height:42,borderRadius: 5,alignItems: 'center',backgroundColor: '#2E8B57'}} onPress={sendComment}>
-                送信
-              </Button>
-            </View>
-
-            <TextInput
-              style={styles.input}
-              color="#2E8B57"
-              label={`コメント (${comment.length}/80文字)`}
-              placeholderTextColor='#808080'
-              editable
-              multiline
-              maxLength={80}
-              minHeight={180} 
-              maxHeight={180} 
-              value={comment}
-              onChangeText={text => setComment(text)}
-            />
-
-          <Card style={styles.Card}>
-            <View style={styles.horizontalImageContainer}>
-              {photo.map((photoUri, index) => (
-              <View style={styles.photoContainer}>
-              <Image source={{ uri: photoUri }} style={styles.photo} />
-              <IconButton
-                icon="close"
-                size={10}
-                style={styles.closeButton}
-                onPress={() => handleRemovePhoto(index)}
-              />
-            </View>
-            ))}
-             {photo.length < 3 && (
-                <View style={styles.cameraContainer}>
-                  <IconButton
-                    icon="camera-plus"
-                    size={30}
-                    onPress={handleChoosePhoto}
-                    style={styles.cameraButton}
-                    disabled={!cameraPermission}
-                  />
+              <Card style={styles.Card}>
+                <View style={styles.horizontalImageContainer}>
+                  {photo.map((photoUri, index) => (
+                    <View style={styles.photoContainer}>
+                      <Image source={{ uri: photoUri }} style={styles.photo} />
+                      <IconButton
+                        icon="close"
+                        size={10}
+                        style={styles.closeButton}
+                        onPress={() => handleRemovePhoto(index)}
+                      />
+                    </View>
+                  ))}
+                  {photo.length < 3 && (
+                    <View style={styles.cameraContainer}>
+                      <IconButton
+                        icon="camera-plus"
+                        size={30}
+                        onPress={handleChoosePhoto}
+                        style={styles.cameraButton}
+                        disabled={!cameraPermission}
+                      />
+                    </View>
+                  )}
                 </View>
-              )}
-            </View>      
-          </Card>
-          </View>
-        </Modal>
-      </TouchableWithoutFeedback>
+              </Card>
+            </View>
+          </Modal>
+        </TouchableWithoutFeedback>
 
         <Modal isVisible={showDeleteModal} onBackdropPress={() => setShowDeleteModal(false)} style={styles.deleteModal}>
           <View style={containerStyle2}>
-            <Text style={{marginBottom:10,fontWeight:'bold',color: 'gray',fontSize:16}}>削除依頼</Text>
-            <Text style={{marginBottom:15,color: 'gray',fontSize:15}}>投稿された内容が間違っているの場合、
-            不適切なコンテンツが含まれている場合に投稿の削除を運営に依頼することができます。</Text>
-            <Text style={{marginBottom:15,color: 'gray',fontSize:15}}>このスポットの削除を依頼しますか？</Text>
+            <Text style={{ marginBottom: 10, fontWeight: 'bold', color: 'gray', fontSize: 16 }}>削除依頼</Text>
+            <Text style={{ marginBottom: 15, color: 'gray', fontSize: 15 }}>投稿された内容が間違っているの場合、
+              不適切なコンテンツが含まれている場合に投稿の削除を運営に依頼することができます。</Text>
+            <Text style={{ marginBottom: 15, color: 'gray', fontSize: 15 }}>このスポットの削除を依頼しますか？</Text>
             <Button onPress={sendRequest}>はい</Button>
-            <Button onPress={()=>setShowDeleteModal(false)}>いいえ</Button>
+            <Button onPress={() => setShowDeleteModal(false)}>いいえ</Button>
           </View>
         </Modal>
 
-      <Modal isVisible={showImageModal} onBackdropPress={() => setShowImageModal(false)} style={styles.imageModal}>
-        <View style={styles.imageModalContainer}>
-          <Image source={{ uri: selectedImage }} style={styles.image} />
-        </View>
-      </Modal>
+        <Modal isVisible={showImageModal} onBackdropPress={() => setShowImageModal(false)} style={styles.imageModal}>
+          <View style={styles.imageModalContainer}>
+            <Image source={{ uri: selectedImage }} style={styles.image} />
+          </View>
+        </Modal>
 
 
 
@@ -337,19 +326,19 @@ export default function DetailDate({ route }) {
           <ScrollView keyboardShouldPersistTaps="handled">
             <Card style={{ backgroundColor: '#EFFBF5' }}>
               <View style={styles.imageContainer}>
-              <Carousel
-                data={data.photo}
-                renderItem={_renderCarouselItem}
-                sliderWidth={Dimensions.get("window").width}
-                itemWidth={Dimensions.get("window").width}
-                onSnapToItem={(index) => setActiveSlide(index)}
-              />
+                <Carousel
+                  data={data.photo}
+                  renderItem={_renderCarouselItem}
+                  sliderWidth={Dimensions.get("window").width}
+                  itemWidth={Dimensions.get("window").width}
+                  onSnapToItem={(index) => setActiveSlide(index)}
+                />
 
-              <Pagination
-                dotsLength={data.photo.length}
-                activeDotIndex={activeSlide}
-                containerStyle={{ paddingVertical: 15 }}
-              />
+                <Pagination
+                  dotsLength={data.photo.length}
+                  activeDotIndex={activeSlide}
+                  containerStyle={{ paddingVertical: 15 }}
+                />
               </View>
               <Card.Content>
                 <View style={styles.row}>
@@ -385,26 +374,26 @@ export default function DetailDate({ route }) {
             </Card>
             <Card style={styles.card}>
               <Text style={styles.commentText}>コメント数 {visibleComment.length}</Text>
-            <Divider/>
-            {visibleComment.map((comment) => (
-              <View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{marginLeft:7,marginTop:7,fontWeight:'bold'}}>{comment.name}</Text> 
-                  <Text style={{marginLeft:7,marginTop:7,color:'gray'}}>{comment.timestamp}</Text> 
-                </View>
-                 <Text style={{marginLeft:7,marginTop:3,marginBottom:7,fontSize:17}}>{comment.comment}</Text>
-                 <View style ={{flexDirection: "row"}}>
-                 {comment.photo.map((photoUri, index) => ( // 写真が存在する場合のみ表示
-                    <View>
-                      <TouchableOpacity onPress={() => handleImagePress(photoUri)}>
-                        <Image source={{ uri: photoUri }} style={styles.image2} />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
+              <Divider />
+              {visibleComment.map((comment) => (
+                <View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ marginLeft: 7, marginTop: 7, fontWeight: 'bold' }}>{comment.name}</Text>
+                    <Text style={{ marginLeft: 7, marginTop: 7, color: 'gray' }}>{comment.timestamp}</Text>
                   </View>
-              <Divider/>
-              </View>
-            ))}
+                  <Text style={{ marginLeft: 7, marginTop: 3, marginBottom: 7, fontSize: 17 }}>{comment.comment}</Text>
+                  <View style={{ flexDirection: "row" }}>
+                    {comment.photo.map((photoUri, index) => ( // 写真が存在する場合のみ表示
+                      <View>
+                        <TouchableOpacity onPress={() => handleImagePress(photoUri)}>
+                          <Image source={{ uri: photoUri }} style={styles.image2} />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                  <Divider />
+                </View>
+              ))}
             </Card>
           </ScrollView>
         ) : (
@@ -430,16 +419,16 @@ const styles = StyleSheet.create({
   image: {
     height: 300,
     margin: 10,
-    marginLeft:35,
-    marginRight:35
+    marginLeft: 35,
+    marginRight: 35
   },
 
   image2: {
     width: 80,
     height: 80,
     resizeMode: 'cover',
-    marginTop:0,
-    margin:10
+    marginTop: 0,
+    margin: 10
   },
   row: {
     flexDirection: 'row',
@@ -472,7 +461,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     width: '71%',
-    marginRight:0
+    marginRight: 0
   },
   buttonText: {
     color: 'white',
@@ -481,12 +470,12 @@ const styles = StyleSheet.create({
   commentButton: {
     borderRadius: 5,
     backgroundColor: '#2E8B57',
-    marginLeft:8
+    marginLeft: 8
   },
   commentDelete: {
     borderRadius: 5,
     backgroundColor: '#2E8B57',
-    marginLeft:2.5
+    marginLeft: 2.5
   },
   input: {
     width: '100%',
@@ -503,28 +492,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  card:{
+  card: {
     backgroundColor: '#EFFBF5',
-    marginTop:10,
-    marginBottom:10
+    marginTop: 10,
+    marginBottom: 10
   },
-  commentText:{
-    fontWeight:'bold',
-    margin:7,
-    fontSize:16
+  commentText: {
+    fontWeight: 'bold',
+    margin: 7,
+    fontSize: 16
   },
   photo: {
     width: 70,
     height: 70,
-    margin:10,
+    margin: 10,
     alignSelf: 'center',
   },
-  Card:{
-    marginTop:10,
-    marginBottom:50,
-    maxHeight:130,
-    maxWidth:280,
-    minHeight:30
+  Card: {
+    marginTop: 10,
+    marginBottom: 50,
+    maxHeight: 130,
+    maxWidth: 280,
+    minHeight: 30
   },
   imageModal: {
     justifyContent: 'center',
@@ -552,7 +541,7 @@ const styles = StyleSheet.create({
   cameraContainer: {
     alignItems: 'center',
     marginBottom: 0,
-    marginTop:0
+    marginTop: 0
   },
 });
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Keyboard, TouchableWithoutFeedback, Text} from 'react-native';
+import { View, StyleSheet, Keyboard, TouchableWithoutFeedback, Text } from 'react-native';
 import { TextInput, Button, Snackbar, Appbar } from 'react-native-paper';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
@@ -15,17 +15,7 @@ const theme = {
   },
 };
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
-    authDomain: "mushimapworld.firebaseapp.com",
-    databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
-    projectId: "mushimapworld",
-    storageBucket: "mushimapworld.appspot.com",
-    messagingSenderId: "717364972455",
-    appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
-    measurementId: "G-NGJBM2G1RB"
-};
-
+const firebaseConfig = require('../../config/default.json').firebaseConfig;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -39,7 +29,7 @@ export default function Input() {
   const [isNameEmpty, setNameEmpty] = useState(false);
   const [isEmailEmpty, setEmailEmpty] = useState(false);
   const [isMessageEmpty, setMessageEmpty] = useState(false);
-  
+
 
   //firebaseの登録処理
   const handlepress = async () => {
@@ -82,8 +72,8 @@ export default function Input() {
           // Show snackbar to indicate successful email submission
           setSnackbarVisible(true);
         } catch (error) {
-        console.error('Error adding document: ', error);
-        }  
+          console.error('Error adding document: ', error);
+        }
       } else {
         if (!name) {
           setNameEmpty(true);
@@ -95,7 +85,7 @@ export default function Input() {
           setMessageEmpty(true);
         }
       }
-      }  
+    }
   };
   const handleSnackbarDismiss = () => {
     setSnackbarVisible(false);
@@ -135,7 +125,7 @@ export default function Input() {
             placeholder='山田太郎'
             placeholderTextColor={'#808080'}
           />
-          <TextInput        
+          <TextInput
             label="Eメール"
             value={email}
             onChangeText={handleEmailChange}
@@ -147,7 +137,7 @@ export default function Input() {
           />
           {isEmailValid ? null : (
             <Text style={styles.errorText}>
-            正しいEメールアドレスの形式ではありません
+              正しいEメールアドレスの形式ではありません
             </Text>
           )}
           <TextInput
@@ -158,7 +148,7 @@ export default function Input() {
             multiline
             maxLength={600}
             minHeight={250}
-            maxHeight={250}  
+            maxHeight={250}
             color="#2E8B57" // テキストの色を薄緑色に設定
           />
           <Text style={styles.errorText}>
@@ -181,16 +171,16 @@ export default function Input() {
         </View>
       </TouchableWithoutFeedback>
       <Appbar style={styles.Footer}>
-          <Button 
-          mode="contained" 
-          onPress={handlepress} 
+        <Button
+          mode="contained"
+          onPress={handlepress}
           style={styles.button}
-          >
-            送信
-          </Button>
+        >
+          送信
+        </Button>
       </Appbar>
     </PaperProvider>
-  ); 
+  );
 }
 
 
@@ -207,7 +197,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: '50%',
     width: '50%',
-  }, 
+  },
   maxLengthMessage: {
     color: 'red',
     marginTop: 5,
@@ -216,8 +206,8 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 20,
   },
-  Footer:{
-    height:'12%',
+  Footer: {
+    height: '12%',
     justifyContent: 'center', // フッターの中央揃え
     alignItems: 'center', // フッターの中央揃え
   },

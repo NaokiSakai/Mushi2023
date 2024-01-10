@@ -3,10 +3,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Platform,
   Image,
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import { Marker } from 'react-native-maps';
@@ -14,42 +12,24 @@ import Footer from './Footer';
 import { useNavigation } from '@react-navigation/native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, where, query, limit} from 'firebase/firestore';
-import { select } from 'firebase/firestore';
 import Headers from './Headers';
 import { Provider } from 'react-native-paper';
 import { ActivityIndicator, MD2Colors } from 'react-native-paper';
 import MapView from "react-native-map-clustering";
 
-
-
-const firebaseConfig = {
-  // Firebaseの設定情報
-    apiKey: "AIzaSyCksrHuiQ4CafP7orUm8jmd1kmnhvIt8Gk",
-    authDomain: "mushimapworld.firebaseapp.com",
-    databaseURL: "https://mushimapworld-default-rtdb.firebaseio.com",
-    projectId: "mushimapworld",
-    storageBucket: "mushimapworld.appspot.com",
-    messagingSenderId: "717364972455",
-    appId: "1:717364972455:web:f8e0c51b6758c2432ec482",
-    measurementId: "G-NGJBM2G1RB"
-};
-
+const firebaseConfig = require('../../config/default.json').firebaseConfig;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
 export default function MapScreen() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [message, setMessage] = useState('位置情報取得中');
-  const [markers, setMarkers] = useState([]);
   const [insectName, setInsectName] = useState('');
   const [visibleMarkers, setVisibleMarkers] = useState([]);
   const navigation = useNavigation();
   const [showMessage, setShowMessage] = useState(false);
   const [lastQueryTime, setLastQueryTime] = useState(0);
-  const [excludeDataIds,setExcludeDataIds] = useState([]);
 
   //現在値を取得移動
   const getLocationAsync = async () => {
@@ -115,11 +95,6 @@ const handleRegionChange = async (region) => {
         const markerData = {
           latlng: markersData,
           name: nameData,
-          // location: data.location,
-          // time: data.time,
-          // address: data.address,
-          // memo: data.memo,
-          // photo: data.photo,
         };
         visibleMarkersData.push(markerData);
         if(visibleMarkersData.length>30){
@@ -132,13 +107,11 @@ const handleRegionChange = async (region) => {
       }
     });
     setVisibleMarkers(visibleMarkersData);
-    // setShowMessage(false);
   }
 };
 
   useEffect(() => {
     getLocationAsync();
-    // fetchMarkers();
   }, []);
 
   useEffect(() => {
@@ -255,5 +228,3 @@ const styles = StyleSheet.create({
 
   }
 });
-
-

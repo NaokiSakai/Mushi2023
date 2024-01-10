@@ -3,7 +3,7 @@ import { PaperProvider} from 'react-native-paper';
 import Guide from '../components/Guide';
 
 //使い方
-export default function ContactForm() {
+export default function GuidePage() {
     return (
       <PaperProvider>
         <Guide></Guide> 

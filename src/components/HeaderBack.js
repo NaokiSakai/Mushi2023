@@ -4,7 +4,9 @@ import { TextInput } from 'react-native-paper';
 import OpenCageGeocoder from 'opencage-api-client';
 import { useNavigation } from '@react-navigation/native';
 
-export default function HeaderBack({setLatitude, setLongitude}) {
+const geoKey = require('../../config/default.json').geoKey;
+
+export default function HeaderBack({ setLatitude, setLongitude }) {
   const theme = {
     ...DefaultTheme,
     colors: {
@@ -18,7 +20,7 @@ export default function HeaderBack({setLatitude, setLongitude}) {
     try {
       const response = await OpenCageGeocoder.geocode({
         q: text, // 検索する地名
-        key: '2c4078063de045b8a9dae534fa87b241', // 自分のOpenCage Geocoding APIキーに置き換えてください
+        key: geoKey, // 自分のOpenCage Geocoding APIキーに置き換えてください
       });
 
       if (response.status.code === 200) {
@@ -40,11 +42,11 @@ export default function HeaderBack({setLatitude, setLongitude}) {
   return (
     <Provider>
       <Appbar.Header>
-      <Appbar.BackAction
-       onPress={() => navigation.navigate('メインマップ')} 
-        style={{ width: 20, height: 25, marginLeft: 10 }}
-      />
-      <TextInput
+        <Appbar.BackAction
+          onPress={() => navigation.navigate('メインマップ')}
+          style={{ width: 20, height: 25, marginLeft: 10 }}
+        />
+        <TextInput
           label="検索するスポットを入力"
           mode="outlined"
           value={text}
@@ -56,7 +58,7 @@ export default function HeaderBack({setLatitude, setLongitude}) {
         <Appbar.Action
           icon="magnify"
           onPress={_handleSearch}
-          style={{ width: 40, height: 40,marginLeft: 10, marginTop:10 ,backgroundColor:'#b5d4bf'}}
+          style={{ width: 40, height: 40, marginLeft: 10, marginTop: 10, backgroundColor: '#b5d4bf' }}
         />
       </Appbar.Header>
     </Provider>

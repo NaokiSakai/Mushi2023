@@ -1,10 +1,9 @@
 import * as React from 'react';
 import MapPin from '../components/MapPins';
 
-
-
-export default function Page1() {
+//マップピンページ
+export default function PinMapPage() {
     return (
-      <MapPin/>//MapPinコンポーネントを呼び出す。
+      <MapPin/>
     );
 }

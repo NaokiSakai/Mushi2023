@@ -1,7 +1,7 @@
 // Footer.js
 import React, { useState } from 'react';
-import { StyleSheet} from 'react-native';
-import { Appbar,Menu} from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Appbar, Menu } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -19,13 +19,9 @@ export default function Footer({ onGetLocation, onFetchMarkers }) {
   const handleDropdownClose = () => {
     setVisible(false);
   };
-  
+
   const handleGetLocation = () => {
     onGetLocation();
-  };
-
-  const handleFetchMarkers = () => {
-    onFetchMarkers();
   };
 
   return (
@@ -53,9 +49,9 @@ export default function Footer({ onGetLocation, onFetchMarkers }) {
           />
         }
       >
-        <Menu.Item  style={[styles.menu]} onPress={() => navigation.navigate('利用規約')} title="利用規約" />
-        <Menu.Item  style={[styles.menu]} onPress={() => navigation.navigate('使い方ガイド')} title="使い方ガイド" />
-        <Menu.Item  style={[styles.menu]} onPress={handleDropdownClose} title="戻る" />
+        <Menu.Item style={[styles.menu]} onPress={() => navigation.navigate('利用規約')} title="利用規約" />
+        <Menu.Item style={[styles.menu]} onPress={() => navigation.navigate('使い方ガイド')} title="使い方ガイド" />
+        <Menu.Item style={[styles.menu]} onPress={handleDropdownClose} title="戻る" />
       </Menu>
     </Appbar>
   );
@@ -83,6 +79,6 @@ const styles = StyleSheet.create({
   menu: {
     backgroundColor: "#EFFBF5",
   },
-  
+
 });
 

@@ -31,8 +31,8 @@ export default function Input() {
             ユーザー：本アプリを閲覧した者をいいます。
             登録・コメント等の情報：テキスト、URL、画像など、本サービスを利用して投稿できる情報をいいます。
             投稿：ユーザーが本アプリに地点情報やコメント等の情報をアップロードする行為をいいます。</Paragraph>
-         <Paragraph>ここに利用規約の本文を書きます。</Paragraph>
-          
+          <Paragraph>ここに利用規約の本文を書きます。</Paragraph>
+
         </ScrollView>
       </View>
     </PaperProvider>

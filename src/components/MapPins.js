@@ -24,7 +24,7 @@ const MapPin = () => {
         latitude: undefined,
         longitude: undefined,
       },
-      location:'',
+      location: '',
     },
   ]);
 
@@ -46,32 +46,32 @@ const MapPin = () => {
   };
 
   //タップした位置の経度緯度を取得
-  const handlePress =async(event) => {
-      try {
-        const { latitude, longitude } = event.nativeEvent.coordinate;
-        const location = await Location.reverseGeocodeAsync({ latitude, longitude });
-        if (location.length > 0) {
-          const address = location[0];
-          // 住所情報の取得
-          const formattedAddress = `${address.postalCode} ${address.country} ${address.region} ${address.city} ${address.street}`;
-          const newMarkers = 
-          // ...markers,
-          {
-            latlng: {
-              latitude: latitude,
-              longitude: longitude,
-            },
-            location: formattedAddress
-          };
-          setMarkers(newMarkers);
-          //ページ遷移先にタップした経度緯度のデータを渡す
-          navigation.navigate('昆虫登録', { markers: newMarkers });
-        } else {
-          console.log('住所情報が見つかりませんでした。');
-        }
-      } catch (error) {
-        console.log('逆ジオコーディングエラー:', error);
+  const handlePress = async (event) => {
+    try {
+      const { latitude, longitude } = event.nativeEvent.coordinate;
+      const location = await Location.reverseGeocodeAsync({ latitude, longitude });
+      if (location.length > 0) {
+        const address = location[0];
+        // 住所情報の取得
+        const formattedAddress = `${address.postalCode} ${address.country} ${address.region} ${address.city} ${address.street}`;
+        const newMarkers =
+        // ...markers,
+        {
+          latlng: {
+            latitude: latitude,
+            longitude: longitude,
+          },
+          location: formattedAddress
+        };
+        setMarkers(newMarkers);
+        //ページ遷移先にタップした経度緯度のデータを渡す
+        navigation.navigate('昆虫登録', { markers: newMarkers });
+      } else {
+        console.log('住所情報が見つかりませんでした。');
       }
+    } catch (error) {
+      console.log('逆ジオコーディングエラー:', error);
+    }
   };
 
   if (latitude && longitude) {
@@ -104,7 +104,7 @@ const MapPin = () => {
       </View>
     );
   }
-  
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <ActivityIndicator animating={true} color={MD2Colors.green800} size={'large'} />
@@ -135,18 +135,18 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   warningText: {
-    fontSize:15,
-    fontWeight:'bold',
-    color:'white',
-    textAlign:'center',
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
   now: {
     position: 'absolute',
     right: 10,
     top: 30,
   },
-  header:{
-    height:100
+  header: {
+    height: 100
   }
 });
 
