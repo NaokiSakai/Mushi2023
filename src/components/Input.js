@@ -11,7 +11,7 @@ const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#2E8B57', // 薄暗い緑色に設定
+    primary: '#4c9753', // 薄暗い緑色に設定
   },
 };
 
@@ -121,7 +121,7 @@ export default function Input() {
             value={name}
             onChangeText={text => setName(text)}
             style={styles.input}
-            color="#2E8B57" // テキストの色を薄緑色に設定
+            color="#4c9753" // テキストの色を薄緑色に設定
             placeholder='山田太郎'
             placeholderTextColor={'#808080'}
           />
@@ -131,7 +131,7 @@ export default function Input() {
             onChangeText={handleEmailChange}
             style={styles.input}
             keyboardType="email-address"
-            color={isEmailValid ? '#2E8B57' : 'red'}
+            color={isEmailValid ? '#4c9753' : 'red'}
             placeholder='××××××＠××××.com'
             placeholderTextColor='##808080' // プレースホルダーのテキストの色を設定
           />
@@ -149,7 +149,7 @@ export default function Input() {
             maxLength={600}
             minHeight={250}
             maxHeight={250}
-            color="#2E8B57" // テキストの色を薄緑色に設定
+            color="#4c9753" // テキストの色を薄緑色に設定
           />
           <Text style={styles.errorText}>
             {isNameEmpty && "名前が入力されていません"}

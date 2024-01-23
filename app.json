@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "mushi_map_world2023",
+    "name": "ムシマップワールド",
     "slug": "mushi_map_world2023",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon2.png",
+    "icon": "./assets/ムシ.webp",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icon2.png",
+      "image": "./assets/ムシ.webp",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

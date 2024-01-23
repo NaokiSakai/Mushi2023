@@ -155,14 +155,14 @@ const handleRegionChange = async (region) => {
             longitudeDelta: 0.002,
           }}
           showsUserLocation={true}
-          clusterColor="#2E8B57"
+          clusterColor="#4c9753"
           clusterStyle={{
             width: 100,
             height: 100,
             borderRadius: 25,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#2E8B57',
+            backgroundColor: '#4c9753',
           }}
           animationEnabled={false}
           onRegionChangeComplete={handleRegionChange} // マップの可視範囲が変更された時に実行される関数を設定
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   messageContainer:{
     position: 'relative',
     width: '100%',
-    backgroundColor: '#2E8B57',
+    backgroundColor: '#4c9753',
     padding: 10,
     marginTop: 2,
     borderRadius: 10,
@@ -225,6 +225,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 5,
-
   }
 });

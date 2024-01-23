@@ -243,6 +243,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8,
+    backgroundColor:'#4c9753'
   },
   modal: {
     flex: 0.4,
@@ -258,7 +259,8 @@ const styles = StyleSheet.create({
   button2: {
     height: '50%',
     width: '50%',
-    marginLeft: '25%'
+    marginLeft: '25%',
+    backgroundColor:'#4c9753'
   },
   Footer: {
     height: '12%'
@@ -283,7 +285,7 @@ const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#2E8B57', // 薄暗い緑色に設定
+    primary: '#4c9753', // 薄暗い緑色に設定
   },
 };
 

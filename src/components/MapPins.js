@@ -10,7 +10,7 @@ import * as Permissions from 'expo-permissions';
 import MapView from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import HeaderBack from './HeaderBack';
-import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { ActivityIndicator, MD2Colors,Provider } from 'react-native-paper';
 
 const MapPin = () => {
   const navigation = useNavigation();
@@ -77,6 +77,7 @@ const MapPin = () => {
   if (latitude && longitude) {
     return (
       <View style={styles.container}>
+        <Provider>
         <View style={styles.header}>
           <HeaderBack setLatitude={setLatitude} setLongitude={setLongitude} />
         </View>
@@ -101,6 +102,7 @@ const MapPin = () => {
           onPress={handlePress}
         >
         </MapView>
+        </Provider>
       </View>
     );
   }
@@ -124,7 +126,7 @@ const styles = StyleSheet.create({
   warningTextContainer: {
     position: 'relative',
     width: '100%',
-    backgroundColor: '#2E8B57',
+    backgroundColor: '#4c9753',
     padding: 10,
     marginTop: 13,
     borderRadius: 10,

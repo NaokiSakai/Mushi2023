@@ -1,10 +1,9 @@
 // Footer.js
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Appbar, Menu } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Appbar, Menu, Colors } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-
 const BOTTOM_APPBAR_HEIGHT = 65;
 
 export default function Footer({ onGetLocation, onFetchMarkers }) {
@@ -35,23 +34,25 @@ export default function Footer({ onGetLocation, onFetchMarkers }) {
       ]}
       safeAreaInsets={{ bottom }}
     >
-      <Appbar.Action style={[styles.icon]} icon="map-marker-radius" onPress={handleGetLocation} />
-      <Appbar.Action style={[styles.icon]} icon="plus-circle-outline" onPress={() => navigation.navigate('ピン配置マップ')} />
-      <Appbar.Action style={[styles.icon]} icon="email-outline" onPress={() => navigation.navigate('お問合せ')} />
+      <Appbar.Action style={[styles.icon]} icon="map-marker-radius"  iconColor='#50511b' onPress={handleGetLocation} />
+      <Appbar.Action style={[styles.icon]} icon="plus-circle-outline"  iconColor='#50511b' onPress={() => navigation.navigate('ピン配置マップ')} />
+      <Appbar.Action style={[styles.icon]} icon="email-outline"  iconColor='#50511b' onPress={() => navigation.navigate('お問合せ')} />
       <Menu
         visible={visible}
-        style={styles.menuContainer}
         onDismiss={handleDropdownClose}
         anchor={
           <Appbar.Action
-            icon="question"
+            icon="dots-horizontal-circle-outline"
+            iconColor='#50511b'
             onPress={handleDropdownOpen}
           />
         }
       >
-        <Menu.Item style={[styles.menu]} onPress={() => navigation.navigate('利用規約')} title="利用規約" />
-        <Menu.Item style={[styles.menu]} onPress={() => navigation.navigate('使い方ガイド')} title="使い方ガイド" />
-        <Menu.Item style={[styles.menu]} onPress={handleDropdownClose} title="戻る" />
+        <View style={{margin:-10}}>
+          <Menu.Item style={[styles.menu]} onPress={() => navigation.navigate('利用規約')} title="利用規約" />
+          <Menu.Item style={[styles.menu]} onPress={() => navigation.navigate('使い方ガイド')} title="使い方ガイド" />
+          <Menu.Item style={[styles.menu]} onPress={handleDropdownClose} title="戻る" />
+        </View>
       </Menu>
     </Appbar>
   );
@@ -72,12 +73,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  menuContainer: {
-    marginLeft: '5%',
-    backgroundColor: 'transparent',
-  },
   menu: {
-    backgroundColor: "#EFFBF5",
+    backgroundColor: "#c3cfb7",
   },
 
 });

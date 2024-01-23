@@ -11,7 +11,7 @@ export default function HeaderBack({ setLatitude, setLongitude }) {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      primary: '#2E8B57', // 薄暗い緑色に設定
+      primary: '#4c9753', // 薄暗い緑色に設定
     },
   };
   const navigation = useNavigation();
@@ -40,8 +40,7 @@ export default function HeaderBack({ setLatitude, setLongitude }) {
   const [text, setText] = React.useState('');
 
   return (
-    <Provider>
-      <Appbar.Header>
+      <Appbar.Header style={{ backgroundColor:'#90a081'}}>
         <Appbar.BackAction
           onPress={() => navigation.navigate('メインマップ')}
           style={{ width: 20, height: 25, marginLeft: 10 }}
@@ -57,11 +56,11 @@ export default function HeaderBack({ setLatitude, setLongitude }) {
 
         <Appbar.Action
           icon="magnify"
+          iconColor='#50511b'
           onPress={_handleSearch}
-          style={{ width: 40, height: 40, marginLeft: 10, marginTop: 10, backgroundColor: '#b5d4bf' }}
+          style={{ width: 40, height: 40, marginLeft: 10, marginTop: 10, backgroundColor: '#d7e6b3' }}
         />
       </Appbar.Header>
-    </Provider>
   );
 }
 

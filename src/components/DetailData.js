@@ -243,25 +243,25 @@ export default function DetailData({ route }) {
                   style={{
                     width: '65%', height: 38,
                     borderWidth: 1,
-                    borderColor: '#2E8B57',
+                    borderColor: '#4c9753',
                     backgroundColor: "#EFFBF5",
                     marginRight: '5%'
                   }}
-                  color="#2E8B57" // テキストの色を薄緑色に設定
+                  color="#4c9753" // テキストの色を薄緑色に設定
                   placeholder='名前'
                   placeholderTextColor={'#808080'}
                   value={name}
                   onChangeText={text => setName(text)}
                 />
 
-                <Button mode="contained" style={{ height: 42, borderRadius: 5, alignItems: 'center', backgroundColor: '#2E8B57' }} onPress={sendComment}>
+                <Button mode="contained" style={{ height: 42, borderRadius: 5, alignItems: 'center', backgroundColor: '#4c9753' }} onPress={sendComment}>
                   送信
                 </Button>
               </View>
 
               <TextInput
                 style={styles.input}
-                color="#2E8B57"
+                color="#4c9753"
                 label={`コメント (${comment.length}/80文字)`}
                 placeholderTextColor='#808080'
                 editable
@@ -342,7 +342,7 @@ export default function DetailData({ route }) {
               </View>
               <Card.Content>
                 <View style={styles.row}>
-                  <Avatar.Icon size={48} icon="bug" style={{ backgroundColor: '#2E8B57' }} />
+                  <Avatar.Icon size={48} icon="bug" style={{ backgroundColor: '#4c9753' }} />
                   <Paragraph style={styles.insect}>{data.name}</Paragraph>
                 </View>
                 <Paragraph style={styles.address}>スポット名：{data.address}</Paragraph>
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   button: {
-    backgroundColor: '#2E8B57',
+    backgroundColor: '#4c9753',
     alignItems: 'center',
     borderRadius: 5,
     width: '71%',
@@ -469,21 +469,21 @@ const styles = StyleSheet.create({
   },
   commentButton: {
     borderRadius: 5,
-    backgroundColor: '#2E8B57',
+    backgroundColor: '#4c9753',
     marginLeft: 8
   },
   commentDelete: {
     borderRadius: 5,
-    backgroundColor: '#2E8B57',
+    backgroundColor: '#4c9753',
     marginLeft: 2.5
   },
   input: {
     width: '100%',
     // marginBottom: 20,
     padding: 0,
-    // backgroundColor: '2E8B57',
+    // backgroundColor: '4c9753',
     borderWidth: 1,
-    borderColor: '#2E8B57',
+    borderColor: '#4c9753',
     // borderRadius: 5,
     marginBottom: 10,
     backgroundColor: "#EFFBF5",
@@ -549,6 +549,6 @@ const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#2E8B57',
+    primary: '#4c9753',
   },
 };

@@ -16,7 +16,17 @@ export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaProvider>
-        <Stack.Navigator>
+      <Stack.Navigator
+          screenOptions={{
+            headerStyle: {
+              backgroundColor:'#90a081'
+            },
+            headerTintColor: 'black', // ヘッダーのテキスト色
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        >
           <Stack.Screen
             name="メインマップ"
             component={メインマップ}
